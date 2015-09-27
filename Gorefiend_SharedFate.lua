@@ -2,6 +2,7 @@
 -- Version: 3.1.2
 -- Load: Zone[Hellfire Citadel]
 -- Do Not Load: EncounterID
+-- Requires: WeakAura Raid HUD
 
 -- Enables HUD connecting lines between the rooted player with SharedFate and the other players
 -- Currently enables even if you do not have SharedFate (I will probably change this to be option based)
