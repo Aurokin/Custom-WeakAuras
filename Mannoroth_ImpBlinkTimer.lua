@@ -31,20 +31,6 @@ function(event)
   end
 end
 
--- init
-aura_env.impWipe = nil;
-aura_env.impBlink = 12;
-aura_env.impName = "Fel Imp";
-aura_env.spellID = 181132;
-aura_env.eventName = "AuroBM_ImpBlinkTimer";
-aura_env.gripReminderEvent = "Auro_MannorothGripReminder";
-aura_env.imps = {};
-aura_env.encounterIDs = {};
-aura_env.encounterIDs[1795] = true;
-for guid in pairs(aura_env.imps) do
-    aura_env.imps[guid] = nil;
-end
-
 -- Text [Every Frame]
 function()
     local impBlinkString = "";
@@ -57,4 +43,18 @@ function()
         impBlinkString = string.format("%s - %.1f", "Imps", impBlinkTimer);
     end
     return impBlinkString;
+end
+
+-- Init
+aura_env.impWipe = nil;
+aura_env.impBlink = 12;
+aura_env.impName = "Fel Imp";
+aura_env.spellID = 181132;
+aura_env.eventName = "AuroBM_ImpBlinkTimer";
+aura_env.gripReminderEvent = "Auro_MannorothGripReminder";
+aura_env.imps = {};
+aura_env.encounterIDs = {};
+aura_env.encounterIDs[1795] = true;
+for guid in pairs(aura_env.imps) do
+    aura_env.imps[guid] = nil;
 end

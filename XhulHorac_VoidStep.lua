@@ -102,5 +102,3 @@ function(event)
         return true;
     end
 end
-
--- WeakAura String
