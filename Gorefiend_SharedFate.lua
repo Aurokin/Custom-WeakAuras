@@ -1,12 +1,11 @@
--- Author: Hunter Sadler (Auro)
--- Date: 09/01/2015
+-- Auro: Gorefiend - Shared Fate HUD
 -- Version: 3.1.2
--- Name: Gorefiend_SharedFate
+-- Load: Zone[Hellfire Citadel]
+-- Do Not Load: EncounterID
 
 -- Enables HUD connecting lines between the rooted player with SharedFate and the other players
 -- Currently enables even if you do not have SharedFate (I will probably change this to be option based)
 -- Init on Encounter Start, and Cleanup on Encounter End
--- DO NOT ENABLE LOAD BY ENCOUNTERID IN WEAKAURA SETTINGS
 
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, AUROBM_SHARED_FATE, ENCOUNTER_START, ENCOUNTER_END]
 function(event, encounterID, msg, _, _, _, _, _, destGUID, destName, _, _, spellID, spellName)

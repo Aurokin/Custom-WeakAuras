@@ -1,8 +1,10 @@
--- Auro Debuff Debug
--- Set Trigger to Aura -> Debuff -> DebuffName
--- Set UnitDebuff("player", "DebuffName");
+-- Auro: Debuff Debug
+-- Version 1.0.0
+
+-- Trigger [Aura -> Debuff -> DebuffName]
 
 -- Custom Text[Every Frame]
+-- Set UnitDebuff("player", "DebuffName");
 function()
     local name,rank,icon,count,debuffType,duration,expirationTime,unitCaster,isStealable,shouldConsolidate,spellId,canApplyAura,isBossDebuff,value1,value2,value3 = UnitDebuff("player", "Frost Shock");
     local debuffTestString = "";

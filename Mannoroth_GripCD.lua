@@ -1,5 +1,10 @@
--- Mannoroth Grip Manager
--- Load in Hellfire Citadel
+-- Auro: Mannoroth - Grip Manager
+-- Version 1.1.0
+-- Load: Zone[Hellfire Citadel]
+-- Do Not Load: EncounterID
+
+-- Useable in other encounters for Grip CD, not raid warnings
+-- Dependent on Mannoroth Imp Blink Timer for raid warning to grip
 
 -- Trigger [ENCOUNTER_START, ENCOUNTER_END, COMBAT_LOG_EVENT_UNFILTERED, Auro_GripMonitor, Auro_MannorothGripReminder]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)

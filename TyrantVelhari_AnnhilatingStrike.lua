@@ -1,11 +1,11 @@
--- Author: Hunter Sadler (Auro)
--- Date: 09/10/2015
+-- Auro: Tyrant Velhari - Annhilating Strike HUD
 -- Version: 1.1.0
--- Name: TyrantVelhari_AnnhilatingStrike
+-- Load: Zone[Hellfire Citadel]
+-- Do Not Load: EncounterID
+-- Requires: WeakAura Raid HUD
 
 -- Enables HUD connecting lines between the main tank and player targetted with Annhilating Strike
 -- Init on Encounter Start, and Cleanup on Encounter End
--- DO NOT ENABLE LOAD BY ENCOUNTERID IN WEAKAURA SETTINGS
 
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, AUROBM_VELHARISTRIKE, ENCOUNTER_START, ENCOUNTER_END]
 function(event, encounterID, msg, _, _, _, _, _, destGUID, destName, _, _, spellID, spellName)

@@ -1,12 +1,9 @@
--- Author: Hunter Sadler (Auro)
--- Date: 09/02/2015
+-- Auro: Xhul'Horac - Void Step HUD
 -- Version: 0.0.5
--- Name: XhulHorac_VoidStep
 
 -- THIS DOES NOT WORK, ITS APPROACH IS NOT POSSIBLE ATM
 
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, AUROBM_VOIDSTEP, ENCOUNTER_START, ENCOUNTER_END, UNIT_DIED]
-
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
     if (event == "ENCOUNTER_START" and encounterID == 1800) then
         -- Init
@@ -95,7 +92,6 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
 end
 
 -- Untrigger
-
 function(event)
     if (event == "AUROBM_VOIDSTEP") then
         -- print("EVENT FIRED ACTUALLY UNTRIGGER");

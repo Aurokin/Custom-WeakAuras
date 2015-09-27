@@ -1,5 +1,8 @@
--- Mannoroth Stamp Reminder
--- Load in Hellfire Citadel
+-- Auro: Mannoroth - Stamp Reminder
+-- Version: 1.0.0
+-- Load: Zone[Hellfire Citadel], EncounterID[1795]
+
+-- Notifies when to Stampede based upon assinged mark number, change mark in init
 
 -- Trigger [ENCOUNTER_START, COMBAT_LOG_EVENT_UNFILTERED]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)

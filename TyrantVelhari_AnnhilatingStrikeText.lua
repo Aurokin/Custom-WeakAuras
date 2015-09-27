@@ -1,3 +1,7 @@
+-- Auro: Tyrant Velhari - Annhilating Strike Target
+-- Version: 1.0.1
+-- Load: EncounterID
+
 -- Trigger [Event -> Combat Log -> Spell -> Cast Start -> Spell NAme: Annihilating Strike]
 
 -- Untrigger [Hide: 3s (Check Cast Time)]

@@ -1,7 +1,6 @@
--- Author: Hunter Sadler (Auro)
--- Date: 08/29/2015
--- Version: 2.0
--- Name: XhulHorac_ChainsOfFelTarget
+-- Auro: Xhul'Horac - Chains of Fel Target
+-- Version: 2.0.0
+-- Load: Zone[Hellfire Citadel], EncounterID[?]
 
 -- This WeakAura tracks the current ChainsOfFel Target while its being casted.
 -- It finds someone in the raid who is targetting the caster, and reports back the casters target

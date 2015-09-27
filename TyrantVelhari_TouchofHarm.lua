@@ -1,3 +1,7 @@
+-- Auro: Tyrant Velhari - Touch of Harm
+-- Version: 1.0.2
+-- Load: Zone[Hellfire Citadel], EncounterID[1784]
+
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, AuroBM_TouchofHarm]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
   if (event == "ENCOUNTER_START" and encounterID == aura_env.encounterID) then

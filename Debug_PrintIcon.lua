@@ -1,5 +1,7 @@
--- Auro Icon Debug
--- Good for testing out icon pathes
+-- Auro: Icon Debug
+-- Version 1.0.1
+
+-- Trigger [Status -> Conditions -> Always active trigger]
 
 -- Custom Text [Every Frame]
 function()
@@ -8,6 +10,5 @@ function()
     local icon = "Interface\\Icons\\Spell_Nature_Brilliance";
     local name = "Thundertwerk";
     testString = string.format("|T%s:0|t - %s - Ready", icon, name);
-
     return testString;
 end

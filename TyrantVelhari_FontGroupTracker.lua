@@ -1,3 +1,8 @@
+-- Auro: Tyrant Velhari - Font Group Tracker
+-- Version: 1.0.1
+-- Load: Zone[Hellfire Citadel]
+-- Do Not Load: EncounterID
+
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, CHAT_MSG_MONSTER_YELL, ENCOUNTER_START, ENCOUNTER_END, AuroBM_FontGroupTracker]
 function(event, encounterID, msg, _, _, _, _, _, destGUID, destName, _, _, spellID, spellName)
   if (event == "ENCOUNTER_START" and encounterID == 1784) then

@@ -1,3 +1,6 @@
+-- Auro: Shorten Number
+-- Version 1.0.2
+
 -- Trigger [Status -> Conditions -> Always active trigger]
 
 -- Custom Text [Every Frame]

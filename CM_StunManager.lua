@@ -1,5 +1,6 @@
--- Auro CM Stun Manager
--- Load in 5 man Dungeon (Instance Type) and Challenge (Dungeon Difficulty)
+-- Auro: CM Stun Manager
+-- Load: Instance Type[5 man Dungeon], Dungeon Difficulty[Challenge]
+-- Version 1.0.2
 
 -- Trigger [CHALLENGE_MODE_START, CHALLENGE_MODE_RESET, CHALLENGE_MODE_COMPLETED, AuroCM_SM, COMBAT_LOG_EVENT_UNFILTERED, CHAT_MSG_ADDON]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)

@@ -1,3 +1,8 @@
+-- Auro: Mannoroth - Imp Blink Timer
+-- Version: 1.0.3
+
+-- Triggers warning for grip in Mannoroth_GripCD
+
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, AuroBM_ImpBlinkTimer]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
   if (event == "ENCOUNTER_START" and aura_env.encounterIDs[encounterID] == true and aura_env.imps) then
