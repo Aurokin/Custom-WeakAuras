@@ -75,13 +75,13 @@ function()
 
   for guid in pairs (aura_env.disks) do
     -- Variables
-    local shackleUnit = core.roster[guid];
+    local shackleUnit = aura_env.core.roster[guid];
     local disk = aura_env.disks[guid];
     local shacklePos = disk.stickTo;
     local num = 0;
     local shackleX, shackleY, shackleMap = unpack(shacklePos);
 
-    for raidUnit, raidPos in pairs(core.positions) do
+    for raidUnit, raidPos in pairs(aura_env.core.positions) do
       if shackleUnit ~= raidUnit then
         local raidX, raidY, raidMap = unpack(raidPos);
         if (shackleMap == raidMap) then
