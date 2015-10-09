@@ -1,9 +1,7 @@
--- Auro: Mannoroth - Imp Blink Timer
--- Version: 1.0.3
+-- Auro: Mannoroth - Wrath of Gul'Dan
+-- Version: 0.0.1
 
--- Triggers warning for grip in Mannoroth_GripCD
-
--- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, AuroBM_ImpBlinkTimer]
+-- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, AuroBM_WrathOfGuldan]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
   if (event == "ENCOUNTER_START" and aura_env.encounterIDs[encounterID] == true) then
     aura_env.wipeTable(aura_env.wraths);
@@ -19,6 +17,16 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
     if (aura_env.wraths[destGUID]["stacks"] <= 0) then
       aura_env.wipeSection(aura_env.wraths, destGUID);
     end
+    if not next(aura_env.wraths) then
+      WeakAuras.ScanEvents(aura_env.eventName);
+    end
+  elseif (msg == "SPELL_AURA_REMOVED" and spellID == aura_env.spellID and aura_env.wraths[destGUID]) then
+    aura_env.wipeSection(aura_env.wraths, destGUID);
+    if not next(aura_env.wraths) then
+      WeakAuras.ScanEvents(aura_env.eventName);
+    end
+  elseif (msg == "UNIT_DIED" and aura_env.wraths[destGUID]) then
+    aura_env.wipeSection(aura_env.wraths, destGUID);
     if not next(aura_env.wraths) then
       WeakAuras.ScanEvents(aura_env.eventName);
     end

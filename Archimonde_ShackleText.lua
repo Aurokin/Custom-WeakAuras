@@ -1,9 +1,8 @@
 -- Auro: Archimonde - Shackle Text
 -- Version: 0.0.1
 -- Load: Zone[Hellfire Citadel]
--- Do Not Load: EncounterID
 
--- Trigger [ENCOUNTER_START, ENCOUNTER_END, COMBAT_LOG_EVENT_UNFILTERED, AuroBM_ShackleText]
+-- Trigger [ENCOUNTER_START, COMBAT_LOG_EVENT_UNFILTERED, AuroBM_ShackleText]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
   if (event == "ENCOUNTER_START" and aura_env.encounterIDs[encounterID] == true) then
     aura_env.wipeTable(aura_env.shackles);
@@ -13,9 +12,6 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       aura_env.rosterIDs[guid] = i;
     end
     print("Auro: Archimonde Shackle Text - Loaded");
-  elseif (event == "ENCOUNTER_END" and aura_env.encounterIDs[encounterID] == true) then
-    aura_env.wipeTable(aura_env.shackles);
-    WeakAuras.ScanEvents(aura_env.eventName);
   end
   if (event == "COMBAT_LOG_EVENT_UNFILTERED") then
     if (msg == "SPELL_AURA_APPLIED" and spellID == aura_env.shackleDebuffSpellID) then
@@ -79,10 +75,9 @@ function()
         end;
       end
     end
-    if (num > 0) then
-      local shackleColor = aura_env.shackleColorRed;
-    else
-      local shackleColor = aura_env.shackleColorGreen;
+    local shackleColor = aura_env.shackleColorRed;
+    if (num == 0) then
+      shackleColor = aura_env.shackleColorGreen;
     end
     shackleString = shackleString .. string.format("%s - |c%s%d|r\n", shackleName, shackleColor, num);
   end
@@ -106,7 +101,7 @@ aura_env.shackles = {};
 aura_env.encounterIDs = {};
 aura_env.encounterIDs[1799] = true;
 aura_env.shackleColorRed = "FFFF0000";
-aura_env.shackleColorGreen = "FF00FF00"
+aura_env.shackleColorGreen = "FF00FF00";
 aura_env.wipeTable = function(table)
   -- Clear Table
   for guid in pairs(table) do
