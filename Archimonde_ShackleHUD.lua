@@ -1,5 +1,5 @@
 -- Auro: Archimonde - ShackleHUD
--- Version: 0.0.1
+-- Version: 0.0.2
 -- Load: Zone[Hellfire Citadel]
 -- Do Not Load: EncounterID
 
@@ -49,6 +49,18 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
         aura_env.core:Request2Show(aura_env.id, false);
         WeakAuras.ScanEvents(aura_env.eventName);
       end
+    elseif (msg == "UNIT_DIED" and aura_env.disks[destGUID]) then
+      -- Clear Disk
+      local disk = aura_env.disks[destGUID];
+      if disk then
+        disk:Free();
+        aura_env.disks[destGUID] = nil;
+      end
+
+      if not next(aura_env.disks) then
+        aura_env.core:Request2Show(aura_env.id, false);
+        WeakAuras.ScanEvents(aura_env.eventName);
+      end
     elseif (msg == "SPELL_CAST_START" and spellID == aura_env.ascensionSpellID) then
       -- P3 Disable HUD
       aura_env.wipeDisks(aura_env.disks);
@@ -56,6 +68,8 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       aura_env.core:Request2Show(aura_env.id, false);
       WeakAuras.ScanEvents(aura_env.eventName);
     elseif (msg == "SPELL_CAST_START" and spellID == aura_env.shackleCastSpellID) then
+      -- If shackles from last shackle are still out the new shackles do not show
+      -- I think I should hide here, and show on cast success
       aura_env.wipeDisks(aura_env.disks);
       aura_env.core:Request2Show(aura_env.id, true, aura_env.hudScale)
     end
@@ -82,7 +96,9 @@ function()
     local shackleX, shackleY, shackleMap = unpack(shacklePos);
 
     for raidUnit, raidPos in pairs(aura_env.core.positions) do
-      if shackleUnit ~= raidUnit then
+      -- if (shackleUnit ~= raidUnit and shackleUnit ~= "player") then
+      -- Currently counting player twice, this solution does not work. Must investigate further.
+      if (shackleUnit ~= raidUnit) then
         local raidX, raidY, raidMap = unpack(raidPos);
         if (shackleMap == raidMap) then
           local distance = aura_env.distance(shackleX, shackleY, raidX, raidY);
@@ -95,9 +111,9 @@ function()
 
     disk.timer:SetText(num);
     if (num > 0) then
-      disk:Color(1, 0, 0, 0.8);
+      disk:Color(1, 0, 0, 0.6);
     else
-      disk:Color(0, 0.5, 0, 0.7);
+      disk:Color(0, 0.5, 0, 0.6);
     end
   end
 

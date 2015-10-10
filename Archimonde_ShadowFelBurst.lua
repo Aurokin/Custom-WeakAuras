@@ -1,5 +1,5 @@
 -- Auro: Archimonde - FelBurstHUD
--- Version: 0.0.2
+-- Version: 0.0.3
 -- Load: Zone[Hellfire Citadel]
 -- Do Not Load: EncounterID
 
@@ -40,7 +40,6 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       disk:Stick(pos);
       disk:Label(name);
       disk:Color(RAID_CLASS_COLORS[class].r, RAID_CLASS_COLORS[class].g, RAID_CLASS_COLORS[class].b, 0.6);
-      disk:Blip(nil);
       -- Color / put in table
       aura_env.disks[destGUID] = disk;
 

@@ -68,6 +68,7 @@ function()
   local shackleString = "";
   local personalID = aura_env.rosterIDs[aura_env.playerGUID];
   local personalX, personalY = UnitPosition("raid" .. personalID);
+  if not personalX then return shackleString end
   for guid in pairs (aura_env.shackles) do
     -- Variables
     local num = 0;
