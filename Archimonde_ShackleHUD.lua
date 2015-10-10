@@ -85,10 +85,8 @@ function()
       if shackleUnit ~= raidUnit then
         local raidX, raidY, raidMap = unpack(raidPos);
         if (shackleMap == raidMap) then
-          local dx = raidX - shackleX;
-          local dy = raidY - shackleY;
-          local distance = (dx * dx) + (dy * dy);
-          if (distance <= (aura_env.shackleRange * aura_env.shackleRange)) then
+          local distance = aura_env.distance(shackleX, shackleY, raidX, raidY);
+          if (distance <= aura_env.shackleRange) then
             num = num + 1;
           end
         end
@@ -130,4 +128,11 @@ aura_env.wipeDisks = function(table)
       disk:Free();
       table[guid] = nil;
   end
+end
+aura_env.distance = function(x1, y1, x2, y2)
+  local dx = x2 - x1;
+  local dy = y2 - y1;
+  local distance = (dx * dx) + (dy * dy);
+  distance = math.sqrt(distance);
+  return distance;
 end

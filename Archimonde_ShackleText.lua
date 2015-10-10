@@ -80,6 +80,7 @@ function()
     for i = 1, aura_env.rosterSize do
       if shackleUnit ~= i then
         local raidX, raidY = UnitPosition("raid" .. i);
+        if not raidX then break end
         local distance = aura_env.distance(shackleX, shackleY, raidX, raidY);
         if (distance <= aura_env.shackleRange) then
           num = num + 1;
@@ -136,10 +137,12 @@ aura_env.wipe2DTable = function(table)
   end
 end
 aura_env.wipeSection = function(table, section)
-  for v in pairs(table[section]) do
-    table[section][v] = nil;
+  if (table[section]) then
+    for v in pairs(table[section]) do
+      table[section][v] = nil;
+    end
+    table[section] = nil;
   end
-  table[section] = nil;
 end
 aura_env.distance = function(x1, y1, x2, y2)
   local dx = x2 - x1;
