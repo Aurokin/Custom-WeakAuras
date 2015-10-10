@@ -1,6 +1,7 @@
 -- Auro: Archimonde - Shackle Text
 -- Version: 0.0.3
 -- Load: Zone[Hellfire Citadel]
+-- TO DO List: Do not count dead players, count which players are within range of the shackle, if 3 or under write these players names out
 
 -- Trigger [ENCOUNTER_START, COMBAT_LOG_EVENT_UNFILTERED, AuroBM_ShackleText]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
