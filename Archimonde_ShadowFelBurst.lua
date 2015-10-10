@@ -30,7 +30,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       if not pos then return end
       local name = GetUnitName(unit, false);
       if not name then return end;
-      local _, class = UnitClass(name);
+      local _, class = UnitClass(unit);
       if not class then return end;
 
       -- Create disk
