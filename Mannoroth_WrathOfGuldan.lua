@@ -1,5 +1,5 @@
 -- Auro: Mannoroth - Wrath of Gul'Dan
--- Version: 0.0.1
+-- Version: 1.0.0
 
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, AuroBM_WrathOfGuldan]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
@@ -69,8 +69,10 @@ aura_env.wipeTable = function(table)
   end
 end
 aura_env.wipeSection = function(table, section)
-  for v in pairs(table[section]) do
-    table[section][v] = nil;
+  if (table[section]) then
+    for v in pairs(table[section]) do
+      table[section][v] = nil;
+    end
+    table[section] = nil;
   end
-  table[section] = nil;
 end
