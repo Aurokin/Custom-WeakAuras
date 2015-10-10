@@ -1,5 +1,5 @@
 -- Auro: Archimonde - Shackle Text
--- Version: 0.0.1
+-- Version: 0.0.3
 -- Load: Zone[Hellfire Citadel]
 
 -- Trigger [ENCOUNTER_START, COMBAT_LOG_EVENT_UNFILTERED, AuroBM_ShackleText]
@@ -81,14 +81,13 @@ function()
       if shackleUnit ~= i then
         local raidX, raidY = UnitPosition("raid" .. i);
         local distance = aura_env.distance(shackleX, shackleY, raidX, raidY);
-        if (distance <= (aura_env.shackleRange * aura_env.shackleRange)) then
+        if (distance <= aura_env.shackleRange) then
           num = num + 1;
         end;
       end
     end
 
     local personalDistance = aura_env.distance(shackleX, shackleY, personalX, personalY);
-    personalDistance = math.sqrt(personalDistance);
     local personalColor = aura_env.colorRed;
     if (personalDistance > 25) then
       personalColor = aura_env.colorGreen;
@@ -140,5 +139,6 @@ aura_env.distance = function(x1, y1, x2, y2)
   local dx = x2 - x1;
   local dy = y2 - y1;
   local distance = (dx * dx) + (dy * dy);
+  distance = math.sqrt(distance);
   return distance;
 end
