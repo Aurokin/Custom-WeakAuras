@@ -5,7 +5,7 @@
 -- Trigger [ENCOUNTER_START, COMBAT_LOG_EVENT_UNFILTERED, AuroBM_ShackleText]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
   if (event == "ENCOUNTER_START" and aura_env.encounterIDs[encounterID] == true) then
-    aura_env.wipeTable(aura_env.shackles);
+    aura_env.wipe2DTable(aura_env.shackles);
     aura_env.wipeTable(aura_env.rosterIDs);
     aura_env.rosterSize = GetNumGroupMembers();
     for i = 1, aura_env.rosterSize do
@@ -46,10 +46,10 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       end
     elseif (msg == "SPELL_CAST_START" and spellID == aura_env.ascensionSpellID) then
       -- P3
-      aura_env.wipeTable(aura_env.shackles);
+      aura_env.wipe2DTable(aura_env.shackles);
       WeakAuras.ScanEvents(aura_env.eventName);
     elseif (msg == "SPELL_CAST_START" and spellID == aura_env.shackleCastSpellID) then
-      aura_env.wipeTable(aura_env.shackles);
+      aura_env.wipe2DTable(aura_env.shackles);
     end
   end
 end
@@ -121,6 +121,12 @@ aura_env.encounterIDs[1799] = true;
 aura_env.colorRed = "FFFF0000";
 aura_env.colorGreen = "FF00FF00";
 aura_env.wipeTable = function(table)
+  -- Clear Table
+  for guid in pairs(table) do
+      table[guid] = nil;
+  end
+end
+aura_env.wipe2DTable = function(table)
   -- Clear Table
   for guid in pairs(table) do
       for v in pairs(table[guid]) do
