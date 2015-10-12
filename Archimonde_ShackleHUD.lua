@@ -1,5 +1,5 @@
 -- Auro: Archimonde - ShackleHUD
--- Version: 0.0.2
+-- Version: 0.0.4
 -- Load: Zone[Hellfire Citadel]
 -- Do Not Load: EncounterID
 
@@ -37,7 +37,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       aura_env.disks[destGUID] = disk;
 
       return true;
-    elseif (msg == "SPELL_AURA_REMOVED" and spellID == aura_env.shackleDebuffSpellID) then
+    elseif ((msg == "SPELL_AURA_REMOVED" and spellID == aura_env.shackleDebuffSpellID) or (msg == "UNIT_DIED" and aura_env.disks[destGUID])) then
       -- Clear Disk
       local disk = aura_env.disks[destGUID];
       if disk then
@@ -49,19 +49,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
         aura_env.core:Request2Show(aura_env.id, false);
         WeakAuras.ScanEvents(aura_env.eventName);
       end
-    elseif (msg == "UNIT_DIED" and aura_env.disks[destGUID]) then
-      -- Clear Disk
-      local disk = aura_env.disks[destGUID];
-      if disk then
-        disk:Free();
-        aura_env.disks[destGUID] = nil;
-      end
-
-      if not next(aura_env.disks) then
-        aura_env.core:Request2Show(aura_env.id, false);
-        WeakAuras.ScanEvents(aura_env.eventName);
-      end
-    elseif (msg == "SPELL_CAST_START" and spellID == aura_env.ascensionSpellID) then
+    elseif (msg == "SPELL_CAST_SUCCESS" and spellID == aura_env.ascensionSpellID) then
       -- P3 Disable HUD
       aura_env.wipeDisks(aura_env.disks);
       -- Turns off HUD
@@ -71,7 +59,8 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       -- If shackles from last shackle are still out the new shackles do not show
       -- I think I should hide here, and show on cast success
       aura_env.wipeDisks(aura_env.disks);
-      aura_env.core:Request2Show(aura_env.id, true, aura_env.hudScale)
+    elseif (msg == "SPELL_CAST_SUCCESS" and spellID == aura_env.shackleCastSpellID) then
+      aura_env.core:Request2Show(aura_env.id, true, aura_env.hudScale);
     end
   end
 end

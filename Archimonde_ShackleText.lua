@@ -1,5 +1,5 @@
 -- Auro: Archimonde - Shackle Text
--- Version: 0.0.3
+-- Version: 0.0.6
 -- Load: Zone[Hellfire Citadel]
 -- TO DO List: Do not count dead players, count which players are within range of the shackle, if 3 or under write these players names out
 
@@ -35,17 +35,12 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       aura_env.shackles[destGUID]["color"] = RAID_CLASS_COLORS[class].colorStr;
 
       return true;
-    elseif (msg == "SPELL_AURA_REMOVED" and spellID == aura_env.shackleDebuffSpellID) then
+    elseif ((msg == "SPELL_AURA_REMOVED" and spellID == aura_env.shackleDebuffSpellID) or (msg == "UNIT_DIED" and aura_env.shackles[destGUID])) then
       aura_env.wipeSection(aura_env.shackles, destGUID);
       if not next(aura_env.shackles) then
         WeakAuras.ScanEvents(aura_env.eventName);
       end
-    elseif (msg == "UNIT_DIED" and aura_env.shackles[destGUID]) then
-      aura_env.wipeSection(aura_env.shackles, destGUID);
-      if not next(aura_env.shackles) then
-        WeakAuras.ScanEvents(aura_env.eventName);
-      end
-    elseif (msg == "SPELL_CAST_START" and spellID == aura_env.ascensionSpellID) then
+    elseif (msg == "SPELL_CAST_SUCCESS" and spellID == aura_env.ascensionSpellID) then
       -- P3
       aura_env.wipe2DTable(aura_env.shackles);
       WeakAuras.ScanEvents(aura_env.eventName);
@@ -72,20 +67,29 @@ function()
   if not personalX then return shackleString end
   for guid in pairs (aura_env.shackles) do
     -- Variables
-    local num = 0;
     local shackleUnit = aura_env.shackles[guid]["unit"];
     local shackleName = aura_env.shackles[guid]["name"];
     local shackleX = aura_env.shackles[guid]["x"];
     local shackleY = aura_env.shackles[guid]["y"];
     local classColor = aura_env.shackles[guid]["color"];
+    local inRange = {};
+    local inRangeName = nil;
+    local inRangeClass = nil;
+    local inRangeString = "";
+    inRange["count"] = 0;
 
     for i = 1, aura_env.rosterSize do
-      if shackleUnit ~= i then
+      local isDead = UnitIsDeadOrGhost("raid" .. i);
+      if (shackleUnit ~= i and isDead == false) then
         local raidX, raidY = UnitPosition("raid" .. i);
         if not raidX then break end
         local distance = aura_env.distance(shackleX, shackleY, raidX, raidY);
         if (distance <= aura_env.shackleRange) then
-          num = num + 1;
+          inRangeName = UnitName("raid" .. i);
+          _, inRangeClass = UnitClass(inRangeName);
+          inRangeName = string.gsub(inRangeName, "%-[^|]+", "");
+          inRange[inRangeName] = RAID_CLASS_COLORS[inRangeClass].colorStr;
+          inRange["count"] = inRange["count"] + 1;
         end;
       end
     end
@@ -97,10 +101,21 @@ function()
     end
 
     local shackleColor = aura_env.colorRed;
-    if (num == 0) then
+    if (inRange["count"] == 0) then
       shackleColor = aura_env.colorGreen;
+      inRangeString = string.format("|c%s%s|r", shackleColor, "Break!");
+    elseif (inRange["count"] <= 3) then
+      for curName in pairs (inRange) do
+        if (curName ~= "count") then
+          inRangeString = inRangeString .. string.format("|c%s%s|r, ", inRange[curName], curName);
+        end
+      end
+      inRangeString = string.sub(inRangeString, 1, (string.len(inRangeString) - 2));
+    else
+      inRangeString = string.format("|c%s%d|r", shackleColor, inRange["count"]);
     end
-    shackleString = shackleString .. string.format("|c%s%s|r - |c%s%d|r - |c%s%dyd|r\n", classColor, shackleName, shackleColor, num, personalColor, personalDistance);
+    shackleString = shackleString .. string.format("|c%s%s|r - |c%s%dyd|r - %s\n", classColor, shackleName, personalColor, personalDistance, inRangeString);
+    aura_env.wipeTable(inRange);
   end
   if not next(aura_env.shackles) then
     WeakAuras.ScanEvents(aura_env.eventName);
