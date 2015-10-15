@@ -1,5 +1,5 @@
 -- Auro: Archimonde - ShackleHUD
--- Version: 0.1.0
+-- Version: 0.1.1
 -- Load: Zone[Hellfire Citadel]
 -- Do Not Load: EncounterID
 
@@ -96,6 +96,14 @@ function()
   if not aura_env.rosterSize then return "" end
   if not aura_env.rosterIDs then return "" end
   if not aura_env.playerRaidID then return "" end
+
+  local chaosOpacity = 0;
+  local wroughtCheck = UnitDebuff("player", "Wrought Chaos");
+  local focusCheck = UnitDebuff("player", "Focused Chaos");
+  if (wroughtCheck ~= nil or focusCheck ~= nil) then
+    chaosOpacity = 0.1;
+  end
+
   for guid in pairs (aura_env.shackles) do
     -- Variables
     local shackleUnit = aura_env.shackles[guid]["unit"];
@@ -127,11 +135,11 @@ function()
 
     disk.timer:SetText(num);
     if (num > 0 and playerIn == true) then
-      disk:Color(1, 0, 0, aura_env.diskOpacity);
+      disk:Color(1, 0, 0, aura_env.diskOpacity - chaosOpacity);
     elseif (num > 0 and playerIn == false) then
-      disk:Color(1, 1, 0, aura_env.diskOpacity);
+      disk:Color(1, 1, 0, aura_env.diskOpacity - chaosOpacity);
     else
-      disk:Color(0, 0.5, 0, aura_env.diskOpacity);
+      disk:Color(0, 0.5, 0, aura_env.diskOpacity - chaosOpacity);
     end
   end
 
