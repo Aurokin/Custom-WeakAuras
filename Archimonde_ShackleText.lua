@@ -65,6 +65,7 @@ function()
   local personalID = aura_env.rosterIDs[aura_env.playerGUID];
   local personalX, personalY = UnitPosition("raid" .. personalID);
   if not personalX then return shackleString end
+  if not personalY then return shackleString end
   for guid in pairs (aura_env.shackles) do
     -- Variables
     local shackleUnit = aura_env.shackles[guid]["unit"];
@@ -78,11 +79,16 @@ function()
     local inRangeString = "";
     inRange["count"] = 0;
 
+    if not shackleUnit then break end
+    if not shackleX then break end
+    if not shackleY then break end
+
     for i = 1, aura_env.rosterSize do
       local isDead = UnitIsDeadOrGhost("raid" .. i);
       if (shackleUnit ~= i and isDead == false) then
         local raidX, raidY = UnitPosition("raid" .. i);
         if not raidX then break end
+        if not raidY then break end
         local distance = aura_env.distance(shackleX, shackleY, raidX, raidY);
         if (distance <= aura_env.shackleRange) then
           inRangeName = UnitName("raid" .. i);

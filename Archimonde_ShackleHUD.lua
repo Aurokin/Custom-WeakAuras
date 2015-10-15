@@ -42,8 +42,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       if not raidID then return false; end
       local x, y, z, map = UnitPosition("raid" .. raidID);
       if not x then return false; end
-      local name = UnitName("raid" .. raidID);
-      name = string.gsub(name, "%-[^|]+", "");
+      if not y then return false; end
 
       -- Create disk
       local disk = aura_env.core:NewDisk(aura_env.shackleRange * aura_env.core.db.scale);
@@ -51,7 +50,6 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       disk:Stick(pos);
       -- Color / put in table
       aura_env.shackles[destGUID] = {};
-      aura_env.shackles[destGUID]["name"] = name;
       aura_env.shackles[destGUID]["x"] = x;
       aura_env.shackles[destGUID]["y"] = y;
       aura_env.shackles[destGUID]["unit"] = raidID;
@@ -101,12 +99,16 @@ function()
   for guid in pairs (aura_env.shackles) do
     -- Variables
     local shackleUnit = aura_env.shackles[guid]["unit"];
-    local shackleName = aura_env.shackles[guid]["name"];
     local shackleX = aura_env.shackles[guid]["x"];
     local shackleY = aura_env.shackles[guid]["y"];
     local disk = aura_env.shackles[guid]["disk"];
     local num = 0;
     local playerIn = false;
+
+    if not shackleX then break end
+    if not shackleY then break end
+    if not shackleUnit then break end
+    if not disk then break end
 
     for i = 1, aura_env.rosterSize do
       local isDead = UnitIsDeadOrGhost("raid" .. i);
@@ -156,11 +158,11 @@ aura_env.ascensionSpellID = 190313;
 aura_env.shackleRange = 25;
 aura_env.encounterIDs = {};
 aura_env.encounterIDs[1799] = true;
-aura_env.diskOpacity = 0.5;
+aura_env.diskOpacity = 0.2;
 aura_env.wipeTable = function(table)
   -- Clear Table
   for guid in pairs(table) do
-    if (guid == "disk" or v == "line") then
+    if (guid == "disk" or guid == "line") then
       local disk = table[guid];
       disk:Free();
     end
@@ -172,8 +174,10 @@ aura_env.wipe2DTable = function(table)
   for guid in pairs(table) do
       for v in pairs(table[guid]) do
         if (v == "disk" or v == "line") then
-          local disk = table[v];
-          disk:Free();
+          local disk = table[guid][v];
+          if (disk) then
+            disk:Free();
+          end
         end
         table[guid][v] = nil;
       end
