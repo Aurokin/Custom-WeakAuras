@@ -1,5 +1,5 @@
 -- Auro: Archimonde - ShackleHUD
--- Version: 0.1.1
+-- Version: 0.2.1
 -- Load: Zone[Hellfire Citadel]
 -- Do Not Load: EncounterID
 
@@ -55,6 +55,13 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       aura_env.shackles[destGUID]["unit"] = raidID;
       aura_env.shackles[destGUID]["disk"] = disk;
 
+      if (destGUID == aura_env.playerGUID) then
+        disk = aura_env.core:NewDisk(aura_env.personalShackleRange * aura_env.core.db.scale);
+        disk:Stick(pos);
+        disk:Color(0, 0, 1, aura_env.diskOpacity - 0.05);
+        aura_env.personalShackle = disk;
+      end
+
       return true;
     elseif ((msg == "SPELL_AURA_REMOVED" and spellID == aura_env.shackleDebuffSpellID) or (msg == "UNIT_DIED" and aura_env.shackles[destGUID])) then
       -- Clear Disk
@@ -63,13 +70,26 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
         aura_env.shackles[destGUID] = nil;
       end
 
+      if (destGUID == aura_env.playerGUID) then
+        local disk = aura_env.personalShackle;
+        if disk then
+          disk:Free();
+          aura_env.personalShackle = nil;
+        end
+      end
+
       if not next(aura_env.shackles) then
         aura_env.core:Request2Show(aura_env.id, false);
         WeakAuras.ScanEvents(aura_env.eventName);
       end
-    elseif (msg == "SPELL_CAST_SUCCESS" and spellID == aura_env.ascensionSpellID) then
+    elseif (msg == "SPELL_CAST_START" and spellID == aura_env.ascensionSpellID) then
       -- P3 Disable HUD
       aura_env.wipe2DTable(aura_env.shackles);
+      local disk = aura_env.personalShackle;
+      if disk then
+        disk:Free();
+        aura_env.personalShackle = nil;
+      end
       -- Turns off HUD
       aura_env.core:Request2Show(aura_env.id, false);
       WeakAuras.ScanEvents(aura_env.eventName);
@@ -77,6 +97,11 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       -- If shackles from last shackle are still out the new shackles do not show
       -- I think I should hide here, and show on cast success
       aura_env.wipe2DTable(aura_env.shackles);
+      local disk = aura_env.personalShackle;
+      if disk then
+        disk:Free();
+        aura_env.personalShackle = nil;
+      end
     elseif (msg == "SPELL_CAST_SUCCESS" and spellID == aura_env.shackleCastSpellID) then
       aura_env.core:Request2Show(aura_env.id, true, aura_env.hudScale);
     end
@@ -112,6 +137,7 @@ function()
     local disk = aura_env.shackles[guid]["disk"];
     local num = 0;
     local playerIn = false;
+    local personalDisk = aura_env.personalShackle;
 
     if not shackleX then break end
     if not shackleY then break end
@@ -142,6 +168,9 @@ function()
       disk:Color(0, 0.5, 0, aura_env.diskOpacity - chaosOpacity);
     end
   end
+  if personalDisk then
+    disk:Color(0, 0, 1, aura_env.diskOpacity - chaosOpacity - 0.05);
+  end
 
   if not next(aura_env.shackles) then
     aura_env.core:Request2Show(aura_env.id, false);
@@ -160,10 +189,12 @@ aura_env.playerRaidID = nil;
 aura_env.rosterSize = nil;
 aura_env.rosterIDs = {};
 aura_env.shackles = {};
+aura_env.personalShackle = nil;
 aura_env.shackleCastSpellID = 184931;
 aura_env.shackleDebuffSpellID = 184964;
 aura_env.ascensionSpellID = 190313;
 aura_env.shackleRange = 25;
+aura_env.personalShackleRange = 30;
 aura_env.encounterIDs = {};
 aura_env.encounterIDs[1799] = true;
 aura_env.diskOpacity = 0.2;

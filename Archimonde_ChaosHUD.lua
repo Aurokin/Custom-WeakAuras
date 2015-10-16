@@ -45,7 +45,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
         aura_env.core:Request2Show(aura_env.id, false);
         WeakAuras.ScanEvents(aura_env.eventName);
       end
-    elseif (msg == "SPELL_CAST_SUCCESS" and spellID == aura_env.ascensionSpellID) then
+    elseif (msg == "SPELL_CAST_START" and spellID == aura_env.ascensionSpellID) then
       -- P3 Disable HUD
       aura_env.wipeLines(aura_env.lines);
       -- Turns off HUD

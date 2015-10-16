@@ -1,5 +1,5 @@
 -- Auro: Archimonde - Shackle Text
--- Version: 0.0.6
+-- Version: 0.0.7
 -- Load: Zone[Hellfire Citadel]
 -- TO DO List: Do not count dead players, count which players are within range of the shackle, if 3 or under write these players names out
 
@@ -40,7 +40,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       if not next(aura_env.shackles) then
         WeakAuras.ScanEvents(aura_env.eventName);
       end
-    elseif (msg == "SPELL_CAST_SUCCESS" and spellID == aura_env.ascensionSpellID) then
+    elseif (msg == "SPELL_CAST_START" and spellID == aura_env.ascensionSpellID) then
       -- P3
       aura_env.wipe2DTable(aura_env.shackles);
       WeakAuras.ScanEvents(aura_env.eventName);
