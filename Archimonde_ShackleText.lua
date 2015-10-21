@@ -1,5 +1,5 @@
 -- Auro: Archimonde - Shackle Text
--- Version: 0.0.7
+-- Version: 0.1.0
 -- Load: Zone[Hellfire Citadel]
 -- TO DO List: Do not count dead players, count which players are within range of the shackle, if 3 or under write these players names out
 
@@ -64,6 +64,7 @@ function()
   local shackleString = "";
   local personalID = aura_env.rosterIDs[aura_env.playerGUID];
   local personalX, personalY = UnitPosition("raid" .. personalID);
+  if not personalID then return shackleString end
   if not personalX then return shackleString end
   if not personalY then return shackleString end
   for guid in pairs (aura_env.shackles) do
