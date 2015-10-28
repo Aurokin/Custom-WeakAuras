@@ -1,5 +1,5 @@
 -- Auro: Archimonde - Mark of the Legion Marker
--- Version: 0.1.0
+-- Version: 0.2.0
 -- Load: Zone[Hellfire Citadel], EncounterID[1799]
 -- WARNING UNTESTED
 
@@ -8,6 +8,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
   if (event == "COMBAT_LOG_EVENT_UNFILTERED") then
     if (msg == "SPELL_AURA_APPLIED" and aura_env.markOfTheLegionSpellID == spellID and aura_env.markOrder[aura_env.mark]) then
       aura_env.markedPlayers[destGUID] = aura_env.markOrder[aura_env.mark];
+      aura_env.markList[aura_env.markOrder[aura_env.mark]] = destGUID;
       if (markingPlayer == true) then
         SetRaidTarget("raid" .. aura_env.rosterIDs[destGUID], aura_env.markOrder[aura_env.mark]);
       end
@@ -17,6 +18,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       if (markingPlayer == true) then
         SetRaidTarget("raid" .. aura_env.rosterIDs[destGUID], 0);
       end
+      aura_env.markList[aura_env.markedPlayers[destGUID]] = nil;
       aura_env.markedPlayers[destGUID] = nil;
       if not next(aura_env.markedPlayers) then
         WeakAuras.ScanEvents(aura_env.eventName);
@@ -28,6 +30,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
   elseif (event == "ENCOUNTER_START") then
     aura_env.mark = 1;
     aura_env.wipeTable(aura_env.markedPlayers);
+    aura_env.wipeTable(aura_env.markList);
     aura_env.wipeTable(aura_env.rosterIDs);
     aura_env.rosterSize = GetNumGroupMembers();
     for i = 1, aura_env.rosterSize do
@@ -64,6 +67,7 @@ aura_env.markerLocation = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_"
 aura_env.mark = nil;
 aura_env.rosterSize = nil;
 aura_env.markedPlayers = {};
+aura_env.markList = {};
 aura_env.rosterIDs = {};
 aura_env.markOrder = {};
 -- Assumes ML = Star, MR = Circle, RL = Diamond, RR = Triangle
@@ -91,7 +95,8 @@ end
 aura_env.markOrderString = function()
   local markOrderString = "";
   local currentTime = GetTime();
-  for guid in pairs (aura_env.markedPlayers) do
+  for key in pairs (aura_env.markList) do
+    local guid = aura_env.markList[key];
     local up, _, _, _, _, _, expires = UnitDebuff("raid" .. aura_env.rosterIDs[guid], "Mark of the Legion");
     local name = UnitName("raid" .. aura_env.rosterIDs[guid]);
     local _, class = UnitClass("raid" .. aura_env.rosterIDs[guid]);
