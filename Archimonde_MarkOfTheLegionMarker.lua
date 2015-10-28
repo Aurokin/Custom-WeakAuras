@@ -1,5 +1,5 @@
 -- Auro: Archimonde - Mark of the Legion Marker
--- Version: 0.0.3
+-- Version: 0.1.0
 -- Load: Zone[Hellfire Citadel], EncounterID[1799]
 -- WARNING UNTESTED
 
@@ -56,6 +56,7 @@ end
 -- Init
 aura_env.display = true;
 aura_env.markingPlayer = false;
+aura_env.bwMarking = false;
 aura_env.eventName = "AuroBM_MarkOfTheLegionMarker";
 aura_env.markOfTheLegionSpellID = 187050;
 aura_env.markOfTheLegionCastSpellID = 188514;
@@ -65,10 +66,19 @@ aura_env.rosterSize = nil;
 aura_env.markedPlayers = {};
 aura_env.rosterIDs = {};
 aura_env.markOrder = {};
+-- Assumes ML = Star, MR = Circle, RL = Diamond, RR = Triangle
+-- Ranged First, Then Melee
 aura_env.markOrder[1] = 3;
 aura_env.markOrder[2] = 4;
 aura_env.markOrder[3] = 1;
 aura_env.markOrder[4] = 2;
+if (aura_env.bwMarking == true) then
+  -- Melee First, Then Ranged
+  aura_env.markOrder[1] = 1;
+  aura_env.markOrder[2] = 2;
+  aura_env.markOrder[3] = 3;
+  aura_env.markOrder[4] = 4;
+end
 aura_env.wipeTable = function(table)
   -- Clear Table
   for guid in pairs(table) do
