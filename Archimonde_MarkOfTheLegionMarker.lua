@@ -1,5 +1,5 @@
 -- Auro: Archimonde - Mark of the Legion Marker
--- Version: 0.0.1
+-- Version: 0.0.3
 -- Load: Zone[Hellfire Citadel], EncounterID[1799]
 -- WARNING UNTESTED
 
@@ -21,7 +21,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       if not next(aura_env.markedPlayers) then
         WeakAuras.ScanEvents(aura_env.eventName);
       end
-    elseif (msg == "SPELL_CAST_START" and aura_env.markOfTheLegionSpellID == spellID) then
+    elseif (msg == "SPELL_CAST_START" and aura_env.markOfTheLegionCastSpellID == spellID) then
       aura_env.mark = 1;
       aura_env.wipeTable(aura_env.markedPlayers);
     end
@@ -48,7 +48,7 @@ end
 -- Custom Text [Every Frame]
 function()
   if (aura_env.display == true) then
-    return aura_env.markOrder();
+    return aura_env.markOrderString();
   end
   return "";
 end
@@ -58,6 +58,7 @@ aura_env.display = true;
 aura_env.markingPlayer = false;
 aura_env.eventName = "AuroBM_MarkOfTheLegionMarker";
 aura_env.markOfTheLegionSpellID = 187050;
+aura_env.markOfTheLegionCastSpellID = 188514;
 aura_env.markerLocation = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_"
 aura_env.mark = nil;
 aura_env.rosterSize = nil;
@@ -77,7 +78,7 @@ end
 aura_env.markerString = function(markerLocation, mark, color, name, expires)
   return string.format("|T%s%d:32|t |c%s%s|r - %.1f\n", markerLocation, mark, color, name, expires);
 end
-aura_env.markOrder = function()
+aura_env.markOrderString = function()
   local markOrderString = "";
   local currentTime = GetTime();
   for guid in pairs (aura_env.markedPlayers) do
