@@ -1,6 +1,6 @@
 -- Auro: Archimonde - Mark of the Legion Marker
--- Version: 0.2.0
--- Load: Zone[Hellfire Citadel], EncounterID[1799]
+-- Version: 0.2.1
+-- Load: EncounterID[1799]
 -- WARNING UNTESTED
 
 -- Trigger [ENCOUNTER_START, COMBAT_LOG_EVENT_UNFILTERED, AuroBM_MarkOfTheLegionMarker]
@@ -59,7 +59,7 @@ end
 -- Init
 aura_env.display = true;
 aura_env.markingPlayer = false;
-aura_env.bwMarking = false;
+aura_env.bwMarking = true;
 aura_env.eventName = "AuroBM_MarkOfTheLegionMarker";
 aura_env.markOfTheLegionSpellID = 187050;
 aura_env.markOfTheLegionCastSpellID = 188514;
