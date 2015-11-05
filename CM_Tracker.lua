@@ -1,17 +1,18 @@
 -- Auro: CM Tracker
--- Version: 1.0.5
+-- Version: 1.0.6
 -- Place Both Auras In Group
 -- Timer - Justified: Center, Anchor: Top, Y Offset: 25
 -- Objectives - Justified: Left, Anchor: Top, Y Offset: 0
 
 -- Auro: CM Tracker Timer
--- Version: 1.0.5
+-- Version: 1.0.6
 -- Load: Dungeon Difficulty[Challenge]
 
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, ZONE_CHANGED_NEW_AREA, PLAYER_LOGIN, CHALLENGE_MODE_START, CHAT_MSG_ADDON]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
   if (event == "CHALLENGE_MODE_START") then
     local _, _, _, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
+    aura_env.trackerString = nil;
     aura_env.currentZoneID = currentZoneID;
     return true;
   elseif (event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_LOGIN"  or (event == "CHAT_MSG_ADDON" and encounterID == aura_env.eventName)) then
@@ -19,6 +20,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
     aura_env.currentZoneID = currentZoneID;
     if difficultyName == "Challenge Mode" then
         -- hide blizzard challenge mode frame
+        aura_env.trackerString = nil;
         ObjectiveTrackerFrame:SetScript("OnEvent", nil);
         ObjectiveTrackerFrame:Hide();
         return true;
@@ -42,6 +44,7 @@ RegisterAddonMessagePrefix(aura_env.eventName);
 aura_env.colorSuccess = "000ff000";
 aura_env.reportEndTime = true;
 aura_env.currentZoneID = nil;
+aura_env.trackerString = nil;
 aura_env.goldTimes = {};
 aura_env.goldTimes[1195] = "20:00";  -- Iron Docks
 aura_env.goldTimes[1208] = "14:30";  -- Grimrail Depot
@@ -85,27 +88,28 @@ aura_env.prepareString = function()
   end
   local dungeon, _, steps = C_Scenario.GetStepInfo();
   if steps == 0 then
-    return "00:00";
+    return aura_env.trackerString or "00:00";
   end
   -- Conditions End
-  local trackerString = "";
+  aura_env.trackerString = "";
   -- Objectives
   local currentTime = aura_env.currentTimeString();
   if (aura_env.reportEndTime == true and aura_env.goldTimes[aura_env.currentZoneID]) then
-    trackerString = currentTime .. " / " .. aura_env.goldTimes[aura_env.currentZoneID];
+    aura_env.trackerString = currentTime .. " / " .. aura_env.goldTimes[aura_env.currentZoneID];
   else
-    trackerString = currentTime;
+    aura_env.trackerString = currentTime;
   end
-  return trackerString;
+  return aura_env.trackerString;
 end
 
 -- Auro: CM Tracker Objectives
--- Version: 1.0.5
+-- Version: 1.0.6
 -- Load: Dungeon Difficulty[Challenge]
 
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, ZONE_CHANGED_NEW_AREA, PLAYER_LOGIN, CHALLENGE_MODE_START, CHAT_MSG_ADDON]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
   if (event == "CHALLENGE_MODE_START") then
+    aura_env.trackerString = nil;
     aura_env.wipeTable(aura_env.completeTimes);
     return true;
   elseif (event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_LOGIN"  or (event == "CHAT_MSG_ADDON" and encounterID == aura_env.eventName)) then
@@ -132,6 +136,7 @@ end
 -- Init
 aura_env.eventName = "AuroCM_Timer";
 RegisterAddonMessagePrefix(aura_env.eventName);
+aura_env.trackerString = nil;
 aura_env.colorSuccess = "000ff000";
 aura_env.completeTimes = {};
 aura_env.wipeTable = function(table)
@@ -176,22 +181,22 @@ aura_env.prepareString = function()
   end
   local dungeon, _, steps = C_Scenario.GetStepInfo();
   if steps == 0 then
-    return "CM Not Started";
+    return aura_env.trackerString or "CM Not Started";
   end
   -- Conditions End
-  local trackerString = "";
+  aura_env.trackerString = "";
   -- Objectives
   for i = 1, steps do
     local name, _, status, curValue, finalValue = C_Scenario.GetCriteriaInfo(i);
     if (status == false) then
-      trackerString = trackerString .. string.format("%s - %d/%d\n", name, curValue, finalValue);
+      aura_env.trackerString = aura_env.trackerString .. string.format("%s - %d/%d\n", name, curValue, finalValue);
     elseif (status == true) then
       if not aura_env.completeTimes[i] then
         local currentTime = aura_env.currentTimeString();
         aura_env.completeTimes[i] = string.format("|c%s%s|r", aura_env.colorSuccess, currentTime);
       end
-      trackerString = trackerString .. string.format("%s - %d/%d - %s\n",  name, curValue, finalValue, aura_env.completeTimes[i]);
+      aura_env.trackerString = aura_env.trackerString .. string.format("%s - %d/%d - %s\n",  name, curValue, finalValue, aura_env.completeTimes[i]);
     end
   end
-  return trackerString;
+  return aura_env.trackerString;
 end
