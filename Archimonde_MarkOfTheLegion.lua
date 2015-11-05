@@ -1,6 +1,6 @@
 -- Auro: Archimonde - Mark of the Legion
 -- Version: 0.0.1
--- Load: Zone[Hellfire Citadel], EncounterID[1799]
+-- Load: EncounterID[1799]
 -- Assumes BigWigs marking
 
 -- Trigger [ENCOUNTER_START, COMBAT_LOG_EVENT_UNFILTERED, AuroBM_MarkOfTheLegion]

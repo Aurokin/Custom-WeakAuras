@@ -1,6 +1,6 @@
 -- Auro: Archimonde - Void Star Fixate
 -- Version: 0.0.1
--- Load: Zone[Hellfire Citadel], EncounterID[1799]
+-- Load: EncounterID[1799]
 
 -- Trigger [ENCOUNTER_START, COMBAT_LOG_EVENT_UNFILTERED, AuroBM_VoidStarFixate]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
