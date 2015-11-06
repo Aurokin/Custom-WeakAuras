@@ -103,23 +103,37 @@ aura_env.prepareString = function()
 end
 
 -- Auro: CM Tracker Objectives
--- Version: 1.0.6
+-- Version: 1.1.2
 -- Load: Dungeon Difficulty[Challenge]
 
--- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, ZONE_CHANGED_NEW_AREA, PLAYER_LOGIN, CHALLENGE_MODE_START, CHAT_MSG_ADDON]
+-- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, ZONE_CHANGED_NEW_AREA, PLAYER_LOGIN, CHALLENGE_MODE_START, CHALLENGE_MODE_COMPLETED, CHAT_MSG_ADDON]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
   if (event == "CHALLENGE_MODE_START") then
     aura_env.trackerString = nil;
-    aura_env.wipeTable(aura_env.completeTimes);
+    aura_env.fillTables();
     return true;
-  elseif (event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_LOGIN"  or (event == "CHAT_MSG_ADDON" and encounterID == aura_env.eventName)) then
+  elseif (event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_LOGIN" or (event == "CHAT_MSG_ADDON" and encounterID == aura_env.eventName)) then
     local _, _, _, difficultyName = GetInstanceInfo();
+    if aura_env.areWeGood == false then aura_env.fillTables(); end
     if difficultyName == "Challenge Mode" then
         -- hide blizzard challenge mode frame
         ObjectiveTrackerFrame:SetScript("OnEvent", nil);
         ObjectiveTrackerFrame:Hide();
         return true;
     end
+  elseif (event == "CHALLENGE_MODE_COMPLETED") then
+    if not aura_env.steps then return false; end
+    local finalString = "";
+    for i = 1, aura_env.steps do
+      local name = aura_env.names[i];
+      local finalValue = aura_env.finalValues[i];
+      local curValue = finalValue;
+      if not name or not finalValue then return false; end
+      -- Text is not green this way, just need to make it green!
+      if not aura_env.completeTimes[i] then aura_env.completeTimes[i] = aura_env.lastTime; end
+      finalString = finalString .. aura_env.objectiveString(name, curValue, finalValue, aura_env.completeTimes[i], i);
+    end
+    aura_env.trackerString = finalString;
   end
 end
 
@@ -139,6 +153,9 @@ RegisterAddonMessagePrefix(aura_env.eventName);
 aura_env.trackerString = nil;
 aura_env.colorSuccess = "000ff000";
 aura_env.completeTimes = {};
+aura_env.names = {};
+aura_env.finalValues = {};
+aura_env.steps = nil;
 aura_env.wipeTable = function(table)
   -- Clear Table
   for guid in pairs(table) do
@@ -164,6 +181,38 @@ aura_env.currentTimeString = function()
   local currentTime = string.format("%s:%s", timeMin, timeSec);
   return currentTime;
 end
+aura_env.fillTables = function()
+  aura_env.wipeTable(aura_env.completeTimes);
+  aura_env.wipeTable(aura_env.names);
+  aura_env.wipeTable(aura_env.finalValues);
+  local _, _, steps = C_Scenario.GetStepInfo();
+  aura_env.steps = steps;
+  for i = 1, steps do
+    local name, _, _, _, finalValue = C_Scenario.GetCriteriaInfo(i);
+    aura_env.names[i] = name;
+    aura_env.finalValues[i] = finalValue;
+  end
+end
+aura_env.areWeGood = function()
+  if not next(aura_env.names) or not next(aura_env.finalValues) or not aura_env.steps then
+    return false;
+  end
+  return true;
+end
+aura_env.objectiveString = function(name, curValue, finalValue, completeTime, i)
+  if (curValue == finalValue) then
+    if not completeTime then
+      completeTime = aura_env.currentTimeString();
+      if completeTime == "" then
+        completeTime = aura_env.lastTime;
+      end
+      completeTime = string.format("|c%s%s|r", aura_env.colorSuccess, completeTime);
+      aura_env.completeTimes[i] = completeTime;
+    end
+    return string.format("%s - %d/%d - %s\n",  name, curValue, finalValue, completeTime);
+  end
+  return string.format("%s - %d/%d\n", name, curValue, finalValue);
+end
 aura_env.prepareString = function()
   -- Conditions Start
   if WeakAuras.IsOptionsOpen() then
@@ -185,18 +234,11 @@ aura_env.prepareString = function()
   end
   -- Conditions End
   aura_env.trackerString = "";
+  aura_env.lastTime = aura_env.currentTimeString();
   -- Objectives
   for i = 1, steps do
     local name, _, status, curValue, finalValue = C_Scenario.GetCriteriaInfo(i);
-    if (status == false) then
-      aura_env.trackerString = aura_env.trackerString .. string.format("%s - %d/%d\n", name, curValue, finalValue);
-    elseif (status == true) then
-      if not aura_env.completeTimes[i] then
-        local currentTime = aura_env.currentTimeString();
-        aura_env.completeTimes[i] = string.format("|c%s%s|r", aura_env.colorSuccess, currentTime);
-      end
-      aura_env.trackerString = aura_env.trackerString .. string.format("%s - %d/%d - %s\n",  name, curValue, finalValue, aura_env.completeTimes[i]);
-    end
+    aura_env.trackerString = aura_env.trackerString .. aura_env.objectiveString(name, curValue, finalValue, aura_env.completeTimes[i], i);
   end
   return aura_env.trackerString;
 end
