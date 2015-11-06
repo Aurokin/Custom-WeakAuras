@@ -103,7 +103,7 @@ aura_env.prepareString = function()
 end
 
 -- Auro: CM Tracker Objectives
--- Version: 1.1.2
+-- Version: 1.1.3
 -- Load: Dungeon Difficulty[Challenge]
 
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, ZONE_CHANGED_NEW_AREA, PLAYER_LOGIN, CHALLENGE_MODE_START, CHALLENGE_MODE_COMPLETED, CHAT_MSG_ADDON]
@@ -130,7 +130,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
       local curValue = finalValue;
       if not name or not finalValue then return false; end
       -- Text is not green this way, just need to make it green!
-      if not aura_env.completeTimes[i] then aura_env.completeTimes[i] = aura_env.lastTime; end
+      -- if not aura_env.completeTimes[i] then aura_env.completeTimes[i] = aura_env.lastTime; end
       finalString = finalString .. aura_env.objectiveString(name, curValue, finalValue, aura_env.completeTimes[i], i);
     end
     aura_env.trackerString = finalString;
@@ -203,7 +203,7 @@ aura_env.objectiveString = function(name, curValue, finalValue, completeTime, i)
   if (curValue == finalValue) then
     if not completeTime then
       completeTime = aura_env.currentTimeString();
-      if completeTime == "" then
+      if completeTime == "" or 0 then
         completeTime = aura_env.lastTime;
       end
       completeTime = string.format("|c%s%s|r", aura_env.colorSuccess, completeTime);
