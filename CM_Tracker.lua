@@ -103,7 +103,7 @@ aura_env.prepareString = function()
 end
 
 -- Auro: CM Tracker Objectives
--- Version: 1.1.3
+-- Version: 1.1.4
 -- Load: Dungeon Difficulty[Challenge]
 
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, ZONE_CHANGED_NEW_AREA, PLAYER_LOGIN, CHALLENGE_MODE_START, CHALLENGE_MODE_COMPLETED, CHAT_MSG_ADDON]
@@ -114,7 +114,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
     return true;
   elseif (event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_LOGIN" or (event == "CHAT_MSG_ADDON" and encounterID == aura_env.eventName)) then
     local _, _, _, difficultyName = GetInstanceInfo();
-    if aura_env.areWeGood == false then aura_env.fillTables(); end
+    if aura_env.areWeGood() == false then aura_env.fillTables(); end
     if difficultyName == "Challenge Mode" then
         -- hide blizzard challenge mode frame
         ObjectiveTrackerFrame:SetScript("OnEvent", nil);
