@@ -1,10 +1,12 @@
 -- Auro: CM Stun Manager
 -- Load: Instance Type[5 man Dungeon], Dungeon Difficulty[Challenge]
--- Version 1.0.2
+-- Version 1.0.3
 
--- Trigger [CHALLENGE_MODE_START, CHALLENGE_MODE_RESET, CHALLENGE_MODE_COMPLETED, AuroCM_SM, COMBAT_LOG_EVENT_UNFILTERED, CHAT_MSG_ADDON]
+-- Trigger [CHALLENGE_MODE_START, CHALLENGE_MODE_RESET, CHALLENGE_MODE_COMPLETED, ZONE_CHANGED_NEW_AREA, PLAYER_LOGIN, AuroCM_SM, COMBAT_LOG_EVENT_UNFILTERED, CHAT_MSG_ADDON]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
-  if (event == "CHALLENGE_MODE_START" or (event == "CHAT_MSG_ADDON" and encounterID == aura_env.eventName)) then
+  if (event == "CHALLENGE_MODE_START" or event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_LOGIN" or (event == "CHAT_MSG_ADDON" and encounterID == aura_env.eventName)) then
+      local _, _, _, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
+      if difficultyName ~= "Challenge Mode" then return false; end
       local currentTime = GetTime();
       aura_env.dr = 2;
       aura_env.drTime = currentTime - 15;
