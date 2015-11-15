@@ -1,5 +1,5 @@
 -- Auro: Early Pull
--- Version: 1.4.1
+-- Version: 1.4.2
 
 -- Trigger [COMBAT_LOG_EVENT_UNFILTERED, CHAT_MSG_ADDON]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName, flag1, flag2)
@@ -20,7 +20,7 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
     aura_env.fillRaid(aura_env.raidRoster);
   end
   if (aura_env.pulled == false) then
-    if (event == "COMBAT_LOG_EVENT_UNFILTERED" and aura_env.combatMsgs[msg] and srcName ~= destName and destName and srcName and spellName) then
+    if (event == "COMBAT_LOG_EVENT_UNFILTERED" and aura_env.combatMsgs[msg] and srcName ~= destName and destName and srcName and spellName and not aura_env.spellExclusion[spellName]) then
       if (aura_env.isBoss(srcName) == true) then return false; end
       if (aura_env.isRaidToRaid(srcName, destName, aura_env.raidRoster) == true) then return false; end
       if (msg == "SPELL_AURA_APPLIED" and flag2 == "BUFF") then return false; end
@@ -66,6 +66,8 @@ aura_env.addonMsgs["BigWigs"]["stringLen"] = 8;
 aura_env.addonMsgs["D4"] = {};
 aura_env.addonMsgs["D4"]["subEvent"] = "PT";
 aura_env.addonMsgs["D4"]["stringLen"] = 2;
+aura_env.spellExclusion = {};
+aura_env.spellExclusion["Weakened Soul"] = true;
 
 aura_env.isBoss = function(name)
   for i = 1, 10 do
