@@ -1,19 +1,21 @@
 -- Auro: CM Tracker
--- Version: 1.0.6
+-- Version: 1.2
 -- Place Both Auras In Group
--- Timer - Justified: Center, Anchor: Top, Y Offset: 25
--- Objectives - Justified: Left, Anchor: Top, Y Offset: 0
+-- Font: Arial Narrow
+-- Timer - Justified: Center, Size: 28, Anchor: Top, Y Offset: 25
+-- Objectives - Justified: Left, Size: 17, Anchor: Top, Y Offset: 0
 
 -- Auro: CM Tracker Timer
--- Version: 1.0.6
+-- Version: 1.1.1
 -- Load: Dungeon Difficulty[Challenge]
 
--- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, ZONE_CHANGED_NEW_AREA, PLAYER_LOGIN, CHALLENGE_MODE_START, CHAT_MSG_ADDON]
+-- Trigger [COMBAT_LOG_EVENT_UNFILTERED, ENCOUNTER_START, ZONE_CHANGED_NEW_AREA, PLAYER_LOGIN, CHALLENGE_MODE_START, CHALLENGE_MODE_RESET, CHAT_MSG_ADDON]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
   if (event == "CHALLENGE_MODE_START") then
     local _, _, _, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
     aura_env.trackerString = nil;
     aura_env.currentZoneID = currentZoneID;
+    aura_env.cmStart = GetTime();
     return true;
   elseif (event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_LOGIN"  or (event == "CHAT_MSG_ADDON" and encounterID == aura_env.eventName)) then
     local _, _, _, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
@@ -21,10 +23,14 @@ function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName,
     if difficultyName == "Challenge Mode" then
         -- hide blizzard challenge mode frame
         aura_env.trackerString = nil;
+        aura_env.cmStart = nil;
         ObjectiveTrackerFrame:SetScript("OnEvent", nil);
         ObjectiveTrackerFrame:Hide();
         return true;
     end
+  elseif (event == "CHALLENGE_MODE_RESET") then
+    aura_env.trackerString = nil;
+    aura_env.cmStart = nil;
   end
 end
 
@@ -43,8 +49,10 @@ aura_env.eventName = "AuroCM_Timer";
 RegisterAddonMessagePrefix(aura_env.eventName);
 aura_env.colorSuccess = "000ff000";
 aura_env.reportEndTime = true;
+aura_env.trueTimer = true;
 aura_env.currentZoneID = nil;
 aura_env.trackerString = nil;
+aura_env.cmStart = nil;
 aura_env.goldTimes = {};
 aura_env.goldTimes[1195] = "20:00";  -- Iron Docks
 aura_env.goldTimes[1208] = "14:30";  -- Grimrail Depot
@@ -56,27 +64,51 @@ aura_env.goldTimes[1176] = "17:30";  -- Shadowmoon Burial Grounds
 aura_env.goldTimes[1358] = "25:00";  -- Upper Blackrock Spire
 aura_env.currentTimeString = function()
   -- Timer
-  local _, timeCM = GetWorldElapsedTime(1);
+  local currentTime = "";
+  local time_CM = nil;
+  local sysTime = nil;
+  local timeMin = nil;
+  local timeSec = nil;
+  local timeMS = nil;
+  if (aura_env.trueTimer == true and aura_env.cmStart) then
+    sysTime = GetTime();
+    timeCM = sysTime - aura_env.cmStart;
+  else
+    _, timeCM = GetWorldElapsedTime(1);
+  end
   if not timeCM then return ""; end
-  local timeMin = timeCM / 60;
+  timeMin = timeCM / 60;
   if (timeMin < 10) then
     timeMin = string.format("0%d", timeMin);
   else
     timeMin = string.format("%d", timeMin);
   end
-  local timeSec = timeCM - (timeMin * 60);
-  if (timeSec < 10) then
-    timeSec = string.format("0%d", timeSec);
+  timeSec = timeCM - (timeMin * 60);
+  if (aura_env.trueTimer == true and aura_env.cmStart) then
+    if (timeSec < 10) then
+      timeSec = string.format("0%.3f", timeSec);
+    else
+      timeSec = string.format("%.3f", timeSec);
+    end
   else
-    timeSec = string.format("%d", timeSec);
+    if (timeSec < 10) then
+      timeSec = string.format("0%d", timeSec);
+    else
+      timeSec = string.format("%d", timeSec);
+    end
   end
-  local currentTime = string.format("%s:%s", timeMin, timeSec);
+  -- timeMS = timeCM - timeMin - timeSec;
+  currentTime = string.format("%s:%s", timeMin, timeSec);
   return currentTime;
 end
 aura_env.prepareString = function()
   -- Conditions Start
   if WeakAuras.IsOptionsOpen() then
-    if aura_env.reportEndTime == true then
+    if aura_env.trueTimer == true and aura_env.reportEndTime == true then
+      return "00:00.000" .. " / " .. "20:00";
+    elseif aura_env.trueTimer == true and aura_env.reportEndTime == false then
+      return "00:00.000";
+    elseif aura_env.trueTimer == false and aura_env.reportEndTime == true then
       return "00:00" .. " / " .. "20:00";
     else
       return "00:00";
@@ -88,7 +120,11 @@ aura_env.prepareString = function()
   end
   local dungeon, _, steps = C_Scenario.GetStepInfo();
   if steps == 0 then
-    return aura_env.trackerString or "00:00";
+    local timerStartString = "00:00";
+    if (aura_env.trueTimer == true) then
+      timerStartString = "00:00.000";
+    end
+    return aura_env.trackerString or timerStartString;
   end
   -- Conditions End
   aura_env.trackerString = "";
