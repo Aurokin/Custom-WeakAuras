@@ -1,7 +1,8 @@
 -- Auro: Archimonde - Mark of the Legion
 -- Version: 0.0.1
--- Load: EncounterID[1799]
+-- Load: Zone[Hellfire Citadel], EncounterID[1799]
 -- Assumes BigWigs marking
+-- Leet Edition
 
 -- Trigger [ENCOUNTER_START, COMBAT_LOG_EVENT_UNFILTERED, AuroBM_MarkOfTheLegion]
 function(event, encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName)
@@ -39,10 +40,10 @@ aura_env.markerLocation = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_"
 aura_env.mark = nil;
 aura_env.expires = nil;
 aura_env.mark_text = {};
-aura_env.mark_text[1] = "MELEE LEFT";
-aura_env.mark_text[2] = "MELEE RIGHT";
-aura_env.mark_text[3] = "RANGED LEFT";
-aura_env.mark_text[4] = "RANGED RIGHT";
+aura_env.mark_text[1] = "";
+aura_env.mark_text[2] = "";
+aura_env.mark_text[3] = "";
+aura_env.mark_text[4] = "";
 aura_env.markString = function()
   local up;
   local currentTime = GetTime();
@@ -50,11 +51,11 @@ aura_env.markString = function()
   aura_env.mark = GetRaidTargetIndex("player");
   if (up and aura_env.expires and aura_env.mark and currentTime) then
     if (aura_env.mark_text[aura_env.mark]) then
-      return string.format("|T%s%d:0|t%s|T%s%d:0|t\n%.1f", aura_env.markerLocation, aura_env.mark, aura_env.mark_text[aura_env.mark], aura_env.markerLocation, aura_env.mark, aura_env.expires - currentTime);
+      return string.format("|T%s%d:48|t%s\n\n%.1f", aura_env.markerLocation, aura_env.mark, aura_env.mark_text[aura_env.mark], aura_env.expires - currentTime);
     end
   end
   if WeakAuras.IsOptionsOpen() then
-        return string.format("|T%s%d:0|t%s|T%s%d:0|t\n%.1f", aura_env.markerLocation, 1, aura_env.mark_text[1], aura_env.markerLocation, 1, 6.9);
+        return string.format("|T%s%d:48|t%s\n\n%.1f", aura_env.markerLocation, 1, aura_env.mark_text[1], 6.9);
     end
   return "";
 end
