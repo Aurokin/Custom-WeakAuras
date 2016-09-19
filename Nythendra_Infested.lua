@@ -1,6 +1,8 @@
 aura_env.prefix = nil;
 aura_env.members = nil;
 aura_env.lastUpdate = nil;
+aura_env.spellName = "Infested";
+aura_env.spellID = nil;
 aura_env.interval = 1;
 aura_env.min = 0;
 aura_env.string = "";
@@ -21,15 +23,41 @@ aura_env.setPrefix = function()
   end
 end
 
-aura_env.initPlayer = function(unit)
-  local name = GetUnitName(unit, false);
-  local class = "ffffffff";
+aura_env.getSpellName = function()
+  if (aura_env.spellName ~= nil) then
+    return aura_env.spellName;
+  elseif (aura_env.spellID ~= nil) then
+    return GetSpellInfo(aura_env.spellID);
+  else
+    return "?";
+  end
+end
+
+aura_env.getClassColor = function(unit)
   local classColorObj = RAID_CLASS_COLORS[select(2, UnitClass(unit))];
   if (classColorObj ~= nil) then
-    class = classColorObj.colorStr;
+    return classColorObj.colorStr;
+  else
+    return "ffffffff";
   end
-  local corruption = select(14, UnitAlternatePowerInfo(unit));
-  return aura_env.playerObj.new(corruption, class, name, unit);
+end
+
+aura_env.getDebuffStacks = function(unit)
+  local spellName = aura_env.getSpellName();
+  if (spellName ~= "?")  then
+    local stacks = select(4, UnitDebuff(unit, spellName));
+    if (stacks ~= nil) then
+      return stacks
+    end
+  end
+  return -1;
+end
+
+aura_env.initPlayer = function(unit)
+  local name = GetUnitName(unit, false);
+  local class = aura_env.getClassColor(unit);
+  local stacks = aura_env.getDebuffStacks(unit);
+  return aura_env.playerObj.new(stacks, class, name, unit);
 end
 
 aura_env.initRaid = function()
@@ -42,7 +70,7 @@ aura_env.initRaid = function()
   table.insert(aura_env.raid, aura_env.initPlayer('player'));
 end
 
-aura_env.processCorruption = function()
+aura_env.processDebuffs = function()
   if (next(aura_env.raid) == nil) then
     aura_env.debug = WeakAuras.IsOptionsOpen();
     aura_env.initRaid();
@@ -56,9 +84,9 @@ aura_env.processCorruption = function()
     aura_env.debug = WeakAuras.IsOptionsOpen();
     aura_env.string = "";
     for k, p in pairs(aura_env.raid) do
-      p:updateCorruption();
+      p:updateStacks();
     end
-    table.sort(aura_env.raid, function(a,b) return a:getCorruption() > b:getCorruption() end);
+    table.sort(aura_env.raid, function(a,b) return a:getStacks() > b:getStacks() end);
     for k, p in pairs(aura_env.raid) do
       aura_env.string = aura_env.string .. p:getString();
     end
@@ -77,22 +105,22 @@ setmetatable(aura_env.playerObj, {
   end,
 });
 
-function aura_env.playerObj.new(corruption, class, name, unit)
+function aura_env.playerObj.new(stacks, class, name, unit)
   local self = setmetatable({}, aura_env.playerObj);
-  self.corruption = corruption;
+  self.stacks = stacks;
   self.class = class;
   self.name = name;
   self.unit = unit;
   return self;
 end
 
-function aura_env.playerObj:setCorruption(corruption)
-  self.corruption = corruption;
+function aura_env.playerObj:setStacks(stacks)
+  self.stacks = stacks;
 end
 
-function aura_env.playerObj:getCorruption()
-  if (self.corruption ~= nil) then
-    return self.corruption;
+function aura_env.playerObj:getStacks(stacks)
+  if (self.stacks ~= nil) then
+    return self.stacks;
   else
     return -1;
   end
@@ -123,17 +151,17 @@ function aura_env.playerObj:getUnit()
 end
 
 function aura_env.playerObj:getString()
-  if (self:getCorruption() > aura_env.min and self:getClass() ~= nil and self:getName() ~= nil) then
-    return string.format("|c%s%s|r - %d\n", self:getClass(), self:getName(), self:getCorruption());
+  if (self:getStacks() > aura_env.min and self:getClass() ~= nil and self:getName() ~= nil) then
+    return string.format("|c%s%s|r - %d\n", self:getClass(), self:getName(), self:getStacks());
   else
     return "";
   end
 end
 
-function aura_env.playerObj:updateCorruption()
+function aura_env.playerObj:updateStacks()
   if (debug == false) then
-    self:setCorruption(select(14, UnitAlternatePowerInfo(self:getUnit())));
+    self:setStacks(aura_env.getDebuffStacks(self:getUnit()));
   else
-    self:setCorruption(math.random(100));
+    self:setStacks(math.random(100));
   end
 end
