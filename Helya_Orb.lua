@@ -23,6 +23,7 @@ function(event, ...)
         aura_env.hiddenExpire = now + aura_env.safeLength;
         aura_env.hidden = true;
         aura_env.setColor(0.5, 0.5, 0.5, 1);
+        --C_Timer.After(0.3, aura_env.delayedTrue(aura_env.id));
         return true;
       end
     end
@@ -113,4 +114,8 @@ aura_env.printDuration = function(now, expire)
 end
 aura_env.setColor = function(r, g, b, a)
   WeakAuras.regions[aura_env.id].region.icon:SetVertexColor(r, g, b, a);
+end
+aura_env.delayedTrue = function(id)
+  print("Working!");
+  WeakAuras.triggerState[id].triggers = true;
 end
