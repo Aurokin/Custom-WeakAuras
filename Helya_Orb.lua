@@ -5,6 +5,7 @@ function(event, ...)
     local guid = select(8, ...);
     local spellID = select(12, ...);
     if (msg == "SPELL_AURA_APPLIED" and spellID == aura_env.spellID) then
+      -- You have the debuff, timing corrected here
       local now = GetTime();
       if (guid == aura_env.guid) then
         aura_env.expire = now + aura_env.length;
@@ -17,6 +18,7 @@ function(event, ...)
       WeakAuras.ScanEvents(aura_env.event);
       return false;
     elseif (msg == "SPELL_CAST_SUCCESS" and spellID == aura_env.castID) then
+      -- 0.3ms from now you will be safe if you don't get a whisper
       local now = GetTime();
       if (aura_env.hiddenExpire == nil or aura_env.hiddenExpire < now) then
         aura_env.expire = now - 1;
@@ -28,6 +30,7 @@ function(event, ...)
       end
     end
   elseif (event == "RAID_BOSS_WHISPER") then
+    -- Boss whispers you if you are going to get the orb, before you get the debuff
     local now = GetTime();
     local msg = select(1, ...);
     if (msg:find(aura_env.tooltipID)) then
