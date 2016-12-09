@@ -10,7 +10,7 @@ function(event, ...)
         aura_env.expire = now + aura_env.length;
         aura_env.hiddenExpire = now + aura_env.hiddenLength;
         aura_env.hidden = false;
-        aura_env.setColor(1, 1, 1, 1);
+        aura_env.setColor(aura_env.runColor.r, aura_env.runColor.g, aura_env.runColor.b, aura_env.runColor.a);
         return true;
       end
     elseif (msg == "UNIT_DIED" and guid == aura_env.guid) then
@@ -22,9 +22,9 @@ function(event, ...)
         aura_env.expire = now - 1;
         aura_env.hiddenExpire = now + aura_env.safeLength;
         aura_env.hidden = true;
-        aura_env.setColor(0.5, 0.5, 0.5, 1);
-        --C_Timer.After(0.3, aura_env.delayedTrue(aura_env.id));
-        return true;
+        aura_env.setColor(aura_env.safeColor.r, aura_env.safeColor.g, aura_env.safeColor.b, aura_env.safeColor.a);
+        -- Manually type delayEvent here, C_Timer.After :(
+        C_Timer.After(0.3, function() WeakAuras.ScanEvents("HelyaOrbCorruptionDelay"); end);
       end
     end
   elseif (event == "RAID_BOSS_WHISPER") then
@@ -34,9 +34,11 @@ function(event, ...)
       aura_env.expire = now + aura_env.length;
       aura_env.hiddenExpire = now + aura_env.hiddenLength;
       aura_env.hidden = false;
-      aura_env.setColor(1, 1, 1, 1);
+      aura_env.setColor(aura_env.runColor.r, aura_env.runColor.g, aura_env.runColor.b, aura_env.runColor.a);
       return true;
     end
+  elseif (event == aura_env.delayEvent) then
+    return true;
   end
 end
 
@@ -68,17 +70,28 @@ function()
 end
 
 -- Init
-aura_env.event = "HelyaOrbCorruption"
+aura_env.event = "HelyaOrbCorruption";
+aura_env.delayEvent = "HelyaOrbCorruptionDelay";
 aura_env.guid = UnitGUID("player");
 aura_env.spellID = 229119;
 aura_env.castID = 227903;
 aura_env.tooltipID = "227920";
 aura_env.length = 8;
-aura_env.hiddenLength = 40;
+aura_env.hiddenLength = 48;
 aura_env.safeLength = 5;
 aura_env.hidden = false;
 aura_env.expire = nil;
 aura_env.hiddenExpire = nil;
+aura_env.safeColor = {};
+aura_env.safeColor.r = 1;
+aura_env.safeColor.g = 1;
+aura_env.safeColor.b = 1;
+aura_env.safeColor.a = 1;
+aura_env.runColor = {};
+aura_env.runColor.r = 1;
+aura_env.runColor.g = 0;
+aura_env.runColor.b = 0;
+aura_env.safeColor.a = 1;
 aura_env.getDuration = function()
   local now = GetTime();
   if (now < aura_env.expire) then
@@ -95,7 +108,7 @@ aura_env.getExpire = function(now, expire, hiddenExpire)
     return expire;
   elseif (now < hiddenExpire) then
     aura_env.hidden = true;
-    aura_env.setColor(0.5, 0.5, 0.5, 1);
+    aura_env.setColor(aura_env.safeColor.r, aura_env.safeColor.g, aura_env.safeColor.b, aura_env.safeColor.a);
     return hiddenExpire
   else
     WeakAuras.ScanEvents(aura_env.event);
@@ -114,8 +127,4 @@ aura_env.printDuration = function(now, expire)
 end
 aura_env.setColor = function(r, g, b, a)
   WeakAuras.regions[aura_env.id].region.icon:SetVertexColor(r, g, b, a);
-end
-aura_env.delayedTrue = function(id)
-  print("Working!");
-  WeakAuras.triggerState[id].triggers = true;
 end
