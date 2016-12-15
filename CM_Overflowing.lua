@@ -35,7 +35,10 @@ end
 
 -- Custom Text [Every Frame]
 function()
-  if (aura_env.group ~= nil and next(aura_env.group) ~= nil) then
+  if (WeakAuras.IsOptionsOpen()) then
+    aura_env.demoGroup = aura_env.randomizeDemoGroup(aura_env.demoGroup);
+    return aura_env.printGroup(aura_env.demoGroup);
+  elseif (aura_env.group ~= nil and next(aura_env.group) ~= nil) then
     return aura_env.printGroup(aura_env.group);
   end
 end
@@ -149,4 +152,34 @@ aura_env.getOverflowing = function(unit)
     return -1;
   end
   return overflow;
+end
+
+-- Demo Mode
+aura_env.demoGroup = {};
+aura_env.demoGroup[1] = {["name"] = "Auro", ["class"] = "DRUID", ["classColor"] = "ffff7d0a", ["unit"] = "player", ["overflowing"] = 500000, ["update"] = nil};
+aura_env.demoGroup[2] = {["name"] = "Onchy", ["class"] = "PALADIN", ["classColor"] = "fff58cba", ["unit"] = "party1", ["overflowing"] = 500000, ["update"] = nil};
+aura_env.demoGroup[3] = {["name"] = "Buddie", ["class"] = "ROGUE", ["classColor"] = "fffff569", ["unit"] = "party2", ["overflowing"] = 500000, ["update"] = nil};
+aura_env.demoGroup[4] = {["name"] = "Skyline", ["class"] = "MAGE", ["classColor"] = "ff3fc7eb", ["unit"] = "party3", ["overflowing"] = 500000, ["update"] = nil};
+aura_env.demoGroup[5] = {["name"] = "Sensations", ["class"] = "SHAMAN", ["classColor"] = "ff0070de", ["unit"] = "party4", ["overflowing"] = 500000, ["update"] = nil};
+
+aura_env.randomizeDemoGroup = function(group)
+  for k, p in pairs(group) do
+    group[k]["overflowing"], group[k]["update"] = aura_env.randomizeOverflow(p["overflowing"], p["update"]);
+  end
+  return group;
+end
+
+aura_env.randomizeOverflow = function(overflow, update)
+  local time = GetTime();
+  if (update ~= nil and update + 1 > time) then
+    return overflow, update;
+  else
+    update = time;
+  end
+  local op = math.random(2);
+  if (op == 1) then
+    return overflow + math.random(50000), update;
+  else
+    return overflow - math.random(50000), update;
+  end
 end
