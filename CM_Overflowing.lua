@@ -37,8 +37,8 @@ end
 -- Custom Text [Every Frame]
 function()
   if (WeakAuras.IsOptionsOpen()) then
-    aura_env.demoGroup = aura_env.randomizeDemoGroup(aura_env.demoGroup);
-    return aura_env.printGroup(aura_env.demoGroup, aura_env.sort);
+    aura_env.demoGroup = aura_env.randomizeDemoGroup(aura_env.demoGuidGroup);
+    return aura_env.printGroup(aura_env.demoGuidGroup, aura_env.sort);
   elseif (aura_env.group ~= nil and next(aura_env.group) ~= nil and aura_env.update) then
     aura_env.update = false;
     aura_env.text = aura_env.printGroup(aura_env.group, aura_env.sort);
@@ -143,6 +143,11 @@ aura_env.printGroup = function(group, sort)
   local str = "";
   local player;
   if (sort) then
+    local sorted = {};
+    for k, p in pairs(group) do
+      table.insert(sorted, p);
+    end
+    group = sorted;
     table.sort(group, function(a, b) return a["overflowing"] > b["overflowing"] end);
   end
   for k, p in pairs(group) do
@@ -169,6 +174,13 @@ aura_env.demoGroup[2] = {["name"] = "Onchy", ["class"] = "PALADIN", ["classColor
 aura_env.demoGroup[3] = {["name"] = "Buddie", ["class"] = "ROGUE", ["classColor"] = "fffff569", ["unit"] = "party2", ["overflowing"] = 500000, ["update"] = nil};
 aura_env.demoGroup[4] = {["name"] = "Skyline", ["class"] = "MAGE", ["classColor"] = "ff3fc7eb", ["unit"] = "party3", ["overflowing"] = 500000, ["update"] = nil};
 aura_env.demoGroup[5] = {["name"] = "Sensations", ["class"] = "SHAMAN", ["classColor"] = "ff0070de", ["unit"] = "party4", ["overflowing"] = 500000, ["update"] = nil};
+
+aura_env.demoGuidGroup = {};
+aura_env.demoGuidGroup["Player-1129-0831D429"] = {["name"] = "Auro", ["class"] = "DRUID", ["classColor"] = "ffff7d0a", ["unit"] = "player", ["overflowing"] = 500000, ["update"] = nil};
+aura_env.demoGuidGroup["Player-1129-092B57E5"] = {["name"] = "Onchy", ["class"] = "PALADIN", ["classColor"] = "fff58cba", ["unit"] = "party1", ["overflowing"] = 500000, ["update"] = nil};
+aura_env.demoGuidGroup["Player-1129-07D2ABB5"] = {["name"] = "Buddie", ["class"] = "ROGUE", ["classColor"] = "fffff569", ["unit"] = "party2", ["overflowing"] = 500000, ["update"] = nil};
+aura_env.demoGuidGroup["Player-1129-08546CD9"] = {["name"] = "Skyline", ["class"] = "MAGE", ["classColor"] = "ff3fc7eb", ["unit"] = "party3", ["overflowing"] = 500000, ["update"] = nil};
+aura_env.demoGuidGroup["Player-1129-05C41ZT2"] = {["name"] = "Sensations", ["class"] = "SHAMAN", ["classColor"] = "ff0070de", ["unit"] = "party4", ["overflowing"] = 500000, ["update"] = nil};
 
 aura_env.randomizeDemoGroup = function(group)
   for k, p in pairs(group) do
