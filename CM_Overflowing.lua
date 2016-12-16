@@ -37,9 +37,10 @@ end
 function()
   if (WeakAuras.IsOptionsOpen()) then
     aura_env.demoGroup = aura_env.randomizeDemoGroup(aura_env.demoGroup);
-    return aura_env.printGroup(aura_env.demoGroup);
+    return aura_env.printGroup(aura_env.demoGroup, aura_env.sort);
+    end
   elseif (aura_env.group ~= nil and next(aura_env.group) ~= nil) then
-    return aura_env.printGroup(aura_env.group);
+    return aura_env.printGroup(aura_env.group, aura_env.sort);
   end
 end
 
@@ -47,6 +48,7 @@ end
 -- Settings
 aura_env.sort = true;
 -- Constants
+aura_env.update = false;
 aura_env.overflow = 221772;
 aura_env.updateMsgs = {["SPELL_HEAL_ABSORBED"] = true, ["SPELL_AURA_APPLIED"] = true};
 aura_env.removedMsg = "SPELL_AURA_REMOVED";
@@ -134,9 +136,12 @@ aura_env.printPlayer = function(player)
   return string.format("|c%s%s|r - %.1f%s", player["classColor"], player["name"], number, marker);
 end
 
-aura_env.printGroup = function(group)
+aura_env.printGroup = function(group, sort)
   local str = "";
   local player;
+  if (sort) then
+    table.sort(group, function(a, b) return a["overflowing"] > b["overflowing"] end);
+  end
   for k, p in pairs(group) do
     if (p["overflowing"] ~= nil and p["overflowing"] >= 0) then
       player = aura_env.printPlayer(p);
