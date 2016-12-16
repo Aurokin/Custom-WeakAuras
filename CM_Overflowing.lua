@@ -2,14 +2,14 @@
 function(event, ...)
   if (event == "PLAYER_ENTERING_WORLD") then
     aura_env.group = aura_env.initGroup();
-    return true;
+    aura_env.update = true;
   elseif (event == "GROUP_ROSTER_UPDATE") then
     if (aura_env.group ~= nil and next(aura_env.group) ~= nil) then
       aura_env.group = aura_env.updateGroup(aura_env.group);
     else
       aura_env.group = aura_env.initGroup();
     end
-    return true;
+    aura_env.update = true;
   elseif (event == "COMBAT_LOG_EVENT_UNFILTERED") then
     local msg = select(2, ...);
     local guid = select(8, ...);
@@ -23,6 +23,7 @@ function(event, ...)
       elseif (aura_env.removedMsg == msg and aura_env.group[guid] ~= nil) then
         aura_env.group[guid]["overflowing"] = -1;
       end
+      aura_env.update = true;
       return true;
     end
   end
@@ -38,16 +39,18 @@ function()
   if (WeakAuras.IsOptionsOpen()) then
     aura_env.demoGroup = aura_env.randomizeDemoGroup(aura_env.demoGroup);
     return aura_env.printGroup(aura_env.demoGroup, aura_env.sort);
-    end
-  elseif (aura_env.group ~= nil and next(aura_env.group) ~= nil) then
-    return aura_env.printGroup(aura_env.group, aura_env.sort);
+  elseif (aura_env.group ~= nil and next(aura_env.group) ~= nil and aura_env.update) then
+    aura_env.update = false;
+    aura_env.text = aura_env.printGroup(aura_env.group, aura_env.sort);
   end
+  return aura_env.text;
 end
 
 -- Init
 -- Settings
 aura_env.sort = true;
 -- Constants
+aura_env.text = "";
 aura_env.update = false;
 aura_env.overflow = 221772;
 aura_env.updateMsgs = {["SPELL_HEAL_ABSORBED"] = true, ["SPELL_AURA_APPLIED"] = true};
