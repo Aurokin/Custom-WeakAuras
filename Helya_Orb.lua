@@ -76,8 +76,11 @@ end
 aura_env.event = "HelyaOrbCorruption";
 aura_env.delayEvent = "HelyaOrbCorruptionDelay";
 aura_env.guid = UnitGUID("player");
+-- Corruption = 229119, Corrosion = 230267
 aura_env.spellID = 229119;
+-- Corruption = 227903, Corrosion = 228056
 aura_env.castID = 227903;
+-- Corruption = "227920", Corrosion = "228058"
 aura_env.tooltipID = "227920";
 aura_env.length = 8;
 aura_env.hiddenLength = 53;
