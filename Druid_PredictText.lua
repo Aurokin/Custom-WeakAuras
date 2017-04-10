@@ -1,5 +1,5 @@
 -- Trigger [CHAT_MSG_ADDON]
-function(event, ap)
+function(event, _, ap)
     aura_env.ap = tonumber(ap)
     return true
 end
