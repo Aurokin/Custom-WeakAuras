@@ -1,6 +1,8 @@
--- Trigger [COMBAT_LOG_EVENT_UNFILTERED]
-function()
-    aura_env.point = aura_env.getPoint(aura_env.breakpoints, aura_env.getHaste())
+-- Trigger [PLAYER_REGEN_DISABLED, PLAYER_REGEN_ENABLED, UNIT_AURA]
+function(event, unitID)
+    if ((event == "UNIT_AURA" and unitID == aura_env.unitID) or event ~= "UNIT_AURA") then 
+        aura_env.point = aura_env.getPoint(aura_env.breakpoints, aura_env.getHaste())
+    end
     return true
 end
 
@@ -24,6 +26,8 @@ aura_env.point = 0
 
 -- Init
 aura_env.point = 0
+aura_env.unitID = "player"
+
 aura_env.breakpoints = {83.3, 66.7, 56.7, 50, 40, 33.3, 30, 16.7, 0}
 aura_env.breakpointInfo = {
     [0] = {
