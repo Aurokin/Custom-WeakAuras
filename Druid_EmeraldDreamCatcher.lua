@@ -25,63 +25,91 @@ end
 aura_env.point = 0
 
 -- Init
+
+-- https://docs.google.com/spreadsheets/d/1dsmvRHlLXEmVAOV8govKKIhuL1GD3aSAWU9PqfWT_9E/preview
+-- Breakpoints Assume 1 Empowerment Of Each Kind
+-- 2x SW (1 Emp) = Full Moon
+-- New Moon + Half Moon = Full Moon
+-- Half Moon = Emp Lunar Strike
+-- GCD Slightly Longer Than SW
+-- SW Slightly Longer Than NM
+
 aura_env.point = 0
 aura_env.unitID = "player"
-
-aura_env.breakpoints = {83.3, 66.7, 56.7, 50, 40, 33.3, 30, 16.7, 0}
+aura_env.breakpoints = {80, 70, 54, 50, 44, 40, 34, 30, 24, 20, 14, 0}
 aura_env.breakpointInfo = {
     [0] = {
         ["icon"] = 535045,
-        ["text"] = "No Emp",
-        ["description"] = "Solar Wrath",
+        ["text"] = "2x",
+        ["description"] = "2x Solar Wrath",
         ["custom"] = false
     },
-    [16.7] = {
+    [14] = {
+        ["icon"] = 1392542,
+        ["text"] = "+SW",
+        ["description"] = "Full Moon + Solar Wrath",
+        ["custom"] = false
+    },
+    [20] = {
         ["icon"] = 135753,
-        ["text"] = "Emp",
-        ["description"] = "Half Moon or Lunar Strike w/ Starlord",
+        ["text"] = "+NM + GCD",
+        ["description"] = "Lunar Strike + New Moon + GCD",
+        ["custom"] = false
+    },
+    [24] = {
+        ["icon"] = 535045,
+        ["text"] = "x2 + LS",
+        ["description"] = "2x Solar Wrath + Lunar Strike or GCD + Solar Wrath + Lunar Strike",
         ["custom"] = false
     },
     [30] = {
-        ["icon"] = 535045,
-        ["text"] = "2x",
-        ["description"] = "2x Solar Wrath w/ Starlord",
+        ["icon"] = 1392542,
+        ["text"] = "+LS",
+        ["description"] = "Full Moon (New Moon / Half Moon) + Lunar Strike",
         ["custom"] = false
     },
-    [33.3] = {
+    [34] = {
+        -- Add Half Moon Icon
         ["icon"] = 135753,
-        ["text"] = "No Emp",
-        ["description"] = "Lunar Strike No Empowerment",
+        ["text"] = "+LS + SW",
+        ["description"] = "Half Moon + Lunar Strike + Solar Wrath",
         ["custom"] = false
     },
     [40] = {
-        ["icon"] = 535045,
-        ["text"] = "+1 GCD",
-        ["description"] = "Solar Wrath w/ Starlord and 1 GCD",
+        -- Add Half Moon Icon
+        ["icon"] = 135753,
+        ["text"] = "+LS + GCD",
+        ["description"] = "Half Moon + Lunar Strike + GCD",
+        ["custom"] = false
+    },
+    [44] = {
+        ["icon"] = 135753,
+        ["text"] = "2x + SW",
+        ["description"] = "2x Lunar Strike + Solar Wrath",
         ["custom"] = false
     },
     [50] = {
+        ["icon"] = 135753,
+        ["text"] = "2x + GCD",
+        ["description"] = "2x Lunar Strike + GCD",
+        ["custom"] = false
+    },
+    [54] = {
         ["icon"] = 1392542,
-        ["text"] = "FM",
-        ["description"] = "Full Moon or 2 GCDs",
+        ["text"] = "+SW + LS",
+        ["description"] = "Full Moon + Lunar Strike + Solar Wrath",
         ["custom"] = false
     },
-    [56.7] = {
+    [70] = {
         ["icon"] = 135753,
-        ["text"] = "LS / SW",
-        ["description"] = "Lunar Strike w/ Starlord and Solar Wrath w/ Starlord or Solar Wrath w/ Starlord and Half Moon",
+        ["text"] = "3x",
+        ["description"]="3x Lunar Strike",
         ["custom"] = false
     },
-    [66.7] = {
+    [80] = {
         ["icon"] = 135753,
-        ["text"] = "+1 GCD",
-        ["description"]="Lunar Strike w/ Starlord and 1 GCD or Half Moon and 1 GCD",
-        ["custom"] = false
-    },
-    [83.3] = {
-        ["icon"] = 135753,
-        ["text"] = "2x",
-        ["description"]="2x Lunar Strike w/ Starlord",
+        ["text"] = "2x + FM",
+        ["description"]="FM + 2x Lunar Strike",
         ["custom"] = false
     }
 }
