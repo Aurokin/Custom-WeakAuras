@@ -6,7 +6,7 @@ function(event, ...)
         return true
     elseif (event == "PLAYER_REGEN_DISABLED" and aura_env.bossFight == false) then
         aura_env.startTime = GetTime();
-        return true;
+        return aura_env.getCombat("player");
     end
     return false;
 end
@@ -19,7 +19,7 @@ function(event, ...)
         return true;
     elseif (event == "PLAYER_REGEN_ENABLED" and aura_env.bossFight == false) then
         aura_env.startTime = nil;
-        return true;
+        return not aura_env.getCombat("player");
     end
     return false;
 end
@@ -39,6 +39,10 @@ end
 -- Init
 aura_env.startTime = nil;
 aura_env.bossFight = false;
+
+aura_env.getCombat = function(unit)
+    return UnitAffectingCombat(unit)
+end
 
 -- On Hide
 aura_env.startTime = nil;
