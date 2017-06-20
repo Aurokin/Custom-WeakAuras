@@ -69,15 +69,13 @@ aura_env.breakpointInfo = {
         ["custom"] = false
     },
     [34] = {
-        -- Add Half Moon Icon
-        ["icon"] = 135753,
+        ["icon"] = 1392543,
         ["text"] = "+LS + SW",
         ["description"] = "Half Moon + Lunar Strike + Solar Wrath",
         ["custom"] = false
     },
     [40] = {
-        -- Add Half Moon Icon
-        ["icon"] = 135753,
+        ["icon"] = 1392543,
         ["text"] = "+LS + GCD",
         ["description"] = "Half Moon + Lunar Strike + GCD",
         ["custom"] = false
@@ -116,7 +114,7 @@ aura_env.breakpointInfo = {
 
 aura_env.icons = {
     ["Full Moon"] = 1392542,
-    -- ["Half Moon"],
+    ["Half Moon"] = 1392543,
     ["Lunar Strike"] = 135753,
     ["Solar Wrath"] = 535045
 

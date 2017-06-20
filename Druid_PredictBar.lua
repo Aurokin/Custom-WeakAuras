@@ -11,7 +11,7 @@ function(event, unitID, pType)
             aura_env.cd = aura_env.hasCd()
         end
 
-        aura_env.ap = math.min(aura_env.getCurrentAP() + aura_env.getAP(aura_env.castToAP, aura_env.currentCast(), aura_env.bota, aura_env.cd), 100)
+        aura_env.ap = math.min(aura_env.getCurrentAP() + aura_env.getAP(aura_env.castToAP, aura_env.currentCast(), aura_env.bota, aura_env.cd), aura_env.getMaxAP())
         aura_env.lastAP = aura_env.cacheAP(aura_env.lastAP, aura_env.ap, aura_env.event)
 
     end
@@ -25,7 +25,7 @@ end
 
 -- Duration Info
 function()
-    return aura_env.ap, 100, true 
+    return aura_env.ap, aura_env.getMaxAP(), true 
 end
 
 -- Init
@@ -94,6 +94,10 @@ end
 
 aura_env.getCurrentAP = function()
     return UnitPower("player", 8)
+end
+
+aura_env.getMaxAP = function()
+    return UnitPowerMax("player", 8)
 end
 
 aura_env.hasBota = function()
