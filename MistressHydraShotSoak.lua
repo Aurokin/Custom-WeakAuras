@@ -1,15 +1,35 @@
--- Trigger [PLAYER_ENTERING_WORLD, GROUP_ROSTER_UPDATE]
+-- Trigger [PLAYER_ENTERING_WORLD, GROUP_ROSTER_UPDATE, COMBAT_LOG_EVENT_UNFILTERED]
 function(event, ...)
   if (event == "PLAYER_ENTERING_WORLD") then
     aura_env.group = aura_env.initGroup();
-    return true;
   elseif (event == "GROUP_ROSTER_UPDATE") then
     if (aura_env.group ~= nil and next(aura_env.group) ~= nil) then
       aura_env.group = aura_env.updateGroup(aura_env.group);
     else
       aura_env.group = aura_env.initGroup();
     end
-    return true;
+  elseif (event == "COMBAT_LOG_EVENT_UNFILTERED") then
+    local msg = select(2, ...);
+    if (aura_env.group == nil or next(aura_env.group) == nil) then
+      aura_env.group = aura_env.initGroup();
+    end
+    if (msg == "SPELL_AURA_APPLIED" or msg == "SPELL_AURA_REMOVED") then
+      local sourceGUID = select(8, ...);
+      local spellID = select(12, ...);
+      if (aura_env.group[sourceGUID] ~= nil and aura_env.spellID == spellID) then
+        if (msg == "SPELL_AURA_APPLIED") then
+          aura_env.group[sourceGUID]["hydraShot"] = true;
+          return true
+        else
+          aura_env.group[sourceGUID]["hydraShot"] = false;
+        end
+      end
+    elseif (msg == "UNIT_DIED") then
+      local destGUID = select(8, ...);
+      if (destGUID ~= nil and aura_env.group[destGUID] ~= nil) then
+        aura_env.group[destGUID]["hydraShot"] = false;
+      end
+    end
   end
 end
 
@@ -26,7 +46,19 @@ function()
 end
 
 -- Init
+-- Set Your Marker Here!
+-- 1: Star
+-- 2: Circle
+-- 3: Diamond
+-- 5: Moon
+aura_env.soaks = {
+    1 = true,
+    2 = false,
+    3 = false,
+    5 = false,
+}
 aura_env.group = {};
+aura_env.spellId = 230139
 -- Functions
 aura_env.getPrefix = function()
   if IsInRaid() then
@@ -51,6 +83,7 @@ aura_env.initPlayer = function(unit)
   player["class"] = UnitClass(unit);
   player["classColor"] = aura_env.getClassColor(unit);
   player["unit"] = unit;
+  player["hydraShot"] = false;
   return player;
 end
 
@@ -62,7 +95,7 @@ aura_env.initGroup = function()
   local unit;
   for i = 1, members do
     unit = prefix .. i;
-    if (i == members && prefix == "party") then
+    if (i == members) then
       unit = 'player';
     end
     guid = UnitGUID(unit);
@@ -103,4 +136,25 @@ aura_env.printGroup = function(group)
     str = str .. player .. "\n";
   end
   return str;
+end
+
+-- Specific Functions
+aura_env.getIcon = function(icons)
+    for k, i = pairs(icons) do
+        if (i == true) then
+            return k
+        end
+    end
+    return 1
+end
+
+aura_env.getPlayer = function(group, icon)
+    for k, p = pairs(group) do
+
+    end
+end
+
+aura_env.printString = function(icon, player)
+    local iconS = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_" .. icon .. ":0|t"
+    return iconS .. " SOAK! " .. iconS .. "\n" .. aura_env.printPlayer(player)
 end
